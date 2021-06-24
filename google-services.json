@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "6624894928",
+    "project_id": "subastas-2f2a6",
+    "storage_bucket": "subastas-2f2a6.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:6624894928:android:e2cad3ae81f9024780a3d5",
+        "android_client_info": {
+          "package_name": "com.cinversi.subastas"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "6624894928-2pr5cpbhb7m8p7hb2orhn5sgqp4tsco7.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBs70sa1HW1deqAWZuvBq5kWkq0ReFkMuQ"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "6624894928-2pr5cpbhb7m8p7hb2orhn5sgqp4tsco7.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
