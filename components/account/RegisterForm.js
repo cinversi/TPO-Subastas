@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { StyleSheet, View } from 'react-native'
+import { Alert, StyleSheet, View } from 'react-native'
 import { Button, Icon, Input } from 'react-native-elements'
 import { size } from 'lodash'
 import { useNavigation } from '@react-navigation/native'
@@ -29,14 +29,15 @@ export default function RegisterForm() {
         }
 
         setLoading(true)
-        const result = await registerUser(formData.email, formData.password)
+        const result = await registerUser(formData.email, "123456",formData.nombre,formData.apellido,formData.dni,formData.direccion,"comun")
         setLoading(false)
 
         if (!result.statusResponse){
             setErrorEmail(result.error)
             return
         }
-        navigation.navigate("account")
+        Alert.alert("Confirmación", "Será redirigido a una nueva pantalla para generar su contraseña.")
+        navigation.navigate("generate-password")
     }
 
     const validateData = () => {
@@ -50,26 +51,55 @@ export default function RegisterForm() {
             isValid = false
         }
 
-        if(size(formData.password) < 6) {
-            setErrorPassword("Debes ingresar una contraseña de al menos seis carácteres.")
-            isValid = false
-        }
+        // if(size(formData.password) < 6) {
+        //     setErrorPassword("Debes ingresar una contraseña de al menos seis carácteres.")
+        //     isValid = false
+        // }
 
-        if(size(formData.confirm) < 6) {
-            setErrorConfirm("Debes ingresar una confirmación de contraseña de al menos seis carácteres.")
-            isValid = false
-        }
-        if(formData.password !== formData.confirm) {
-            setErrorPassword("La contraseña y la confirmación no son iguales.")
-            setErrorConfirm("La contraseña y la confirmación no son iguales.")
-            isValid = false
-        }
+        // if(size(formData.confirm) < 6) {
+        //     setErrorConfirm("Debes ingresar una confirmación de contraseña de al menos seis carácteres.")
+        //     isValid = false
+        // }
+        // if(formData.password !== formData.confirm) {
+        //     setErrorPassword("La contraseña y la confirmación no son iguales.")
+        //     setErrorConfirm("La contraseña y la confirmación no son iguales.")
+        //     isValid = false
+        // }
 
         return isValid
     }
 
     return (
         <View style={styles.form}>
+            
+            <Input
+                containerStyle={styles.input}
+                placeholder="Ingresa tu nombre..."
+                onChange={(e) => onChange(e, "nombre")}
+                errorMessage={errorEmail}
+                defaultValue={formData.nombre}
+            />
+            <Input
+                containerStyle={styles.input}
+                placeholder="Ingresa tu apellido..."
+                onChange={(e) => onChange(e, "apellido")}
+                errorMessage={errorEmail}
+                defaultValue={formData.apellido}
+            />
+            <Input
+                containerStyle={styles.input}
+                placeholder="Ingresa tu DNI..."
+                onChange={(e) => onChange(e, "dni")}
+                errorMessage={errorEmail}
+                defaultValue={formData.dni}
+            />
+            <Input
+                containerStyle={styles.input}
+                placeholder="Ingresa tu direccion..."
+                onChange={(e) => onChange(e, "direccion")}
+                errorMessage={errorEmail}
+                defaultValue={formData.direccion}
+            />
             <Input
              containerStyle={styles.input}
              placeholder="Ingresa tu email..."
@@ -78,7 +108,7 @@ export default function RegisterForm() {
              errorMessage={errorEmail}
              defaultValue={formData.email}
              />
-            <Input
+            {/* <Input
              containerStyle={styles.input}
              placeholder="Ingresa tu contraseña..."
              password={true}
@@ -111,7 +141,7 @@ export default function RegisterForm() {
                 onPress={()=> setShowPassword(!showPassword)}
                />
             }
-             />
+             /> */}
              <Button
                 title="Registrar nuevo usuario"
                 containerStyle={styles.btnContainer}

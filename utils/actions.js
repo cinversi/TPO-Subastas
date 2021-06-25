@@ -29,14 +29,25 @@ export const closeSession = () => {
     return firebase.auth().signOut()
 }
 
-export const registerUser = async(email, password) => {
+// export const registerUser = async(email, password,dni,direccion,categoria) => {
+//     const result = { statusResponse: true, error: null}
+//     try {
+//         await firebase.auth().createUserWithEmailAndPassword(email)
+//     } catch (error) {
+//         result.statusResponse = false
+//         result.error = "Este correo ya ha sido registrado."
+//     }
+//     return result
+// }
+
+export const registerUser = async(email, password,dni,direccion,categoria) => {
     const result = { statusResponse: true, error: null}
-    try {
-        await firebase.auth().createUserWithEmailAndPassword(email, password)
-    } catch (error) {
-        result.statusResponse = false
-        result.error = "Este correo ya ha sido registrado."
-    }
+    var user = firebase.auth().createUserWithEmailAndPassword(email, 
+        password).then(cred => {
+        return firebase.firestore().collection('users').doc(cred.user.uid).set({ 
+        email,password,dni,direccion,categoria
+          })
+        })
     return result
 }
 
