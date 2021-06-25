@@ -1,20 +1,20 @@
 import React, { useState } from 'react'
 import { Alert, StyleSheet, View } from 'react-native'
 import { Button, Icon, Input } from 'react-native-elements'
-import { size } from 'lodash'
+import { isEmpty, isNumber, size } from 'lodash'
 import { useNavigation } from '@react-navigation/native'
 
 import { validateEmail } from '../../utils/helpers'
-import { addDocumentWithId, getCurrentUser, getToken, registerUser } from '../../utils/actions'
+import { registerUser } from '../../utils/actions'
 import Loading from '../Loading'
 
-
 export default function RegisterForm() {
-    const [showPassword, setShowPassword] = useState(false)
     const [formData, setFormData] = useState(defaultFormValues())
     const [errorEmail, setErrorEmail] = useState("")
-    const [errorPassword, setErrorPassword] = useState("")
-    const [errorConfirm, setErrorConfirm] = useState("")
+    const [errorNombre, setErrorNombre] = useState("")
+    const [errorApellido, setErrorApellido] = useState("")
+    const [errorDNI, setErrorDNI] = useState("")
+    const [errorDireccion, setErrorDireccion] = useState("")
     const [loading, setLoading] = useState(false)
 
     const navigation = useNavigation()
@@ -41,107 +41,93 @@ export default function RegisterForm() {
     }
 
     const validateData = () => {
-        setErrorConfirm("")
         setErrorEmail("")
-        setErrorPassword("")
+        setErrorNombre("")
+        setErrorApellido("")
+        setErrorDNI("")
+        setErrorDireccion("")
         let isValid = true
-
+        
         if(!validateEmail(formData.email)) {
-            setErrorEmail("Debes de ingresar un email válido.")
+            setErrorEmail("Debes ingresar un email válido.")
+            isValid = false
+        }
+        
+        if(isEmpty(formData.nombre)) {
+            setErrorNombre("Debes ingresar un nombre válido.")
+            isValid = false
+        }
+        
+        if(isEmpty(formData.apellido)) {
+            setErrorApellido("Debes ingresar un apellido válido.")
+            isValid = false
+        }
+        
+        if(isEmpty(formData.dni)) {
+            setErrorDNI("Debes ingresar un dni válido.")
             isValid = false
         }
 
-        // if(size(formData.password) < 6) {
-        //     setErrorPassword("Debes ingresar una contraseña de al menos seis carácteres.")
-        //     isValid = false
-        // }
+        if(isNaN(formData.dni)) {
+            setErrorDNI("Debes un dni válido.")
+            isValid = false
+        }
 
-        // if(size(formData.confirm) < 6) {
-        //     setErrorConfirm("Debes ingresar una confirmación de contraseña de al menos seis carácteres.")
-        //     isValid = false
-        // }
-        // if(formData.password !== formData.confirm) {
-        //     setErrorPassword("La contraseña y la confirmación no son iguales.")
-        //     setErrorConfirm("La contraseña y la confirmación no son iguales.")
-        //     isValid = false
-        // }
+        if(size(formData.dni) < 6) {
+            setErrorDNI("El dni debe contener al menos seis números.")
+            isValid = false
+        }
 
+        if(size(formData.dni) > 8) {
+            setErrorDNI("El dni debe contener menos de ocho números.")
+            isValid = false
+        }
+        
+        if(isEmpty(formData.direccion)) {
+            setErrorDireccion("Debes ingresar una dirección válida.")
+            isValid = false
+        }
         return isValid
     }
 
     return (
-        <View style={styles.form}>
-            
+        <View style={styles.form}>       
             <Input
                 containerStyle={styles.input}
                 placeholder="Ingresa tu nombre..."
                 onChange={(e) => onChange(e, "nombre")}
-                errorMessage={errorEmail}
+                errorMessage={errorNombre}
                 defaultValue={formData.nombre}
             />
             <Input
                 containerStyle={styles.input}
                 placeholder="Ingresa tu apellido..."
                 onChange={(e) => onChange(e, "apellido")}
-                errorMessage={errorEmail}
+                errorMessage={errorApellido}
                 defaultValue={formData.apellido}
             />
             <Input
                 containerStyle={styles.input}
                 placeholder="Ingresa tu DNI..."
                 onChange={(e) => onChange(e, "dni")}
-                errorMessage={errorEmail}
+                errorMessage={errorDNI}
                 defaultValue={formData.dni}
             />
             <Input
                 containerStyle={styles.input}
                 placeholder="Ingresa tu direccion..."
                 onChange={(e) => onChange(e, "direccion")}
-                errorMessage={errorEmail}
+                errorMessage={errorDireccion}
                 defaultValue={formData.direccion}
             />
             <Input
-             containerStyle={styles.input}
-             placeholder="Ingresa tu email..."
-             onChange={(e)=> onChange(e,"email")}
-             keyboardType="email-address"
-             errorMessage={errorEmail}
-             defaultValue={formData.email}
+                containerStyle={styles.input}
+                placeholder="Ingresa tu email..."
+                onChange={(e)=> onChange(e,"email")}
+                keyboardType="email-address"
+                errorMessage={errorEmail}
+                defaultValue={formData.email}
              />
-            {/* <Input
-             containerStyle={styles.input}
-             placeholder="Ingresa tu contraseña..."
-             password={true}
-             secureTextEntry={!showPassword}
-             onChange={(e)=> onChange(e,"password")}
-             errorMessage={errorPassword}
-             defaultValue={formData.password}
-             rightIcon={
-                 <Icon
-                    type="material-community"
-                    name={showPassword ? "eye-off-outline": "eye-outline"}
-                    iconStyle={styles.icon}
-                    onPress={()=> setShowPassword(!showPassword)}
-                />
-             }
-             />
-            <Input
-             containerStyle={styles.input}
-             placeholder="Confirma tu contraseña..."
-             password={true}
-             secureTextEntry={!showPassword}
-             onChange={(e)=> onChange(e,"confirm")}
-             errorMessage={errorConfirm}
-             defaultValue={formData.confirm}
-             rightIcon={
-                <Icon
-                type="material-community"
-                name={showPassword ? "eye-off-outline": "eye-outline"}
-                iconStyle={styles.icon}
-                onPress={()=> setShowPassword(!showPassword)}
-               />
-            }
-             /> */}
              <Button
                 title="Registrar nuevo usuario"
                 containerStyle={styles.btnContainer}
@@ -154,7 +140,7 @@ export default function RegisterForm() {
 }
 
 const defaultFormValues = () =>{
-    return { email: "", password:"", confirm: ""}
+    return { email: "", nombre:"", apellido: "", dni: "", direccion: ""}
 }
 
 const styles = StyleSheet.create({
