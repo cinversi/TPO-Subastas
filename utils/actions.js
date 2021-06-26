@@ -40,12 +40,12 @@ export const closeSession = () => {
 //     return result
 // }
 
-export const registerUser = async(email, password,dni,direccion,categoria) => {
+export const registerUser = async(email,password,nombre,apellido,dni,direccion,categoria) => {
     const result = { statusResponse: true, error: null}
-    var user = firebase.auth().createUserWithEmailAndPassword(email, 
+    const user = firebase.auth().createUserWithEmailAndPassword(email, 
         password).then(cred => {
-        return firebase.firestore().collection('users').doc(cred.user.uid).set({ 
-        email,password,dni,direccion,categoria
+        return firebase.firestore().collection('users').doc(cred.user.uid).set({
+            email,password,nombre,apellido,dni,direccion,categoria
           })
         })
     return result
@@ -434,4 +434,16 @@ export const sendEmailResetPassword = async(email) => {
         result.error = error
     }
     return result
+}
+
+export const updateDireccion = async(newData) => {
+    const result = { statusResponse: true, error: null }
+    try {
+        const usersRef=db.collection("users")
+        usersRef.doc(getCurrentUser().uid).update({direccion:newData}) 
+     } catch (error) {
+        result.statusResponse = false
+        result.error = error
+    }
+    return result   
 }

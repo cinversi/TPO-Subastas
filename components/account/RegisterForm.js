@@ -1,13 +1,14 @@
 import React, { useState } from 'react'
 import { Alert, StyleSheet, View } from 'react-native'
 import { Button, Icon, Input } from 'react-native-elements'
-import { isEmpty, isNumber, size } from 'lodash'
+import { isEmpty, size } from 'lodash'
 import { useNavigation } from '@react-navigation/native'
-
+ 
 import { validateEmail } from '../../utils/helpers'
 import { registerUser } from '../../utils/actions'
 import Loading from '../Loading'
-
+ 
+ 
 export default function RegisterForm() {
     const [formData, setFormData] = useState(defaultFormValues())
     const [errorEmail, setErrorEmail] = useState("")
@@ -16,22 +17,22 @@ export default function RegisterForm() {
     const [errorDNI, setErrorDNI] = useState("")
     const [errorDireccion, setErrorDireccion] = useState("")
     const [loading, setLoading] = useState(false)
-
+ 
     const navigation = useNavigation()
-
+ 
     const onChange = (e,type) =>{
         setFormData({...formData, [type]:e.nativeEvent.text})
     }
-
+ 
     const doRegisterUser = async() => {
         if (!validateData()){
             return;
         }
-
+ 
         setLoading(true)
         const result = await registerUser(formData.email, "123456",formData.nombre,formData.apellido,formData.dni,formData.direccion,"comun")
         setLoading(false)
-
+ 
         if (!result.statusResponse){
             setErrorEmail(result.error)
             return
@@ -39,7 +40,7 @@ export default function RegisterForm() {
         Alert.alert("Confirmación", "Será redirigido a una nueva pantalla para generar su contraseña.")
         navigation.navigate("generate-password")
     }
-
+ 
     const validateData = () => {
         setErrorEmail("")
         setErrorNombre("")
@@ -68,28 +69,29 @@ export default function RegisterForm() {
             isValid = false
         }
 
-        if(isNaN(formData.dni)) {
-            setErrorDNI("Debes un dni válido.")
-            isValid = false
-        }
-
         if(size(formData.dni) < 6) {
+
             setErrorDNI("El dni debe contener al menos seis números.")
+
             isValid = false
+
         }
 
         if(size(formData.dni) > 8) {
+
             setErrorDNI("El dni debe contener menos de ocho números.")
+
             isValid = false
+
         }
-        
+ 
         if(isEmpty(formData.direccion)) {
             setErrorDireccion("Debes ingresar una dirección válida.")
             isValid = false
         }
         return isValid
     }
-
+ 
     return (
         <View style={styles.form}>       
             <Input
@@ -138,11 +140,11 @@ export default function RegisterForm() {
         </View>
     )
 }
-
+ 
 const defaultFormValues = () =>{
     return { email: "", nombre:"", apellido: "", dni: "", direccion: ""}
 }
-
+ 
 const styles = StyleSheet.create({
     form: {
         marginTop: 30

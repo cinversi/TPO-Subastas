@@ -68,7 +68,7 @@ export default function Subastas({ navigation }) {
                     />
                 ) : (
                     <View style={styles.notFoundView}>
-                        <Text style={styles.notFoundText}>No hay subastas registrados.</Text>
+                        <Text style={styles.notFoundText}>No hay subastas registradas.</Text>
                     </View>
                 )
             }

@@ -7,6 +7,7 @@ import Modal from '../Modal';
 import ChangeDisplayNameForm from '../../components/account/ChangeDisplayNameForm';
 import ChangeEmailForm from '../../components/account/ChangeEmailForm';
 import ChangePasswordForm from '../../components/account/ChangePasswordForm';
+import ChangeDireccionForm from './ChangeDireccionForm';
 
 export default function AccountOptions({ user, toastRef, setRelodUser }) {
     const [showModal, setShowModal] = useState(false)
@@ -38,6 +39,14 @@ export default function AccountOptions({ user, toastRef, setRelodUser }) {
                 iconColorRight: "#a7bfd3",
                 onPress: () => selectedComponent("password")
             },
+            {
+                title : "Cambiar Direccion",
+                iconNameLeft: "map-marker",
+                iconColorLeft: "#a7bfd3",
+                iconNameRight: "chevron-right",
+                iconColorRight: "#a7bfd3",
+                onPress: () => selectedComponent("direccion")
+            },
         ]
     }
 
@@ -66,6 +75,14 @@ export default function AccountOptions({ user, toastRef, setRelodUser }) {
             case "password":
                 setRenderComponent(
                     <ChangePasswordForm
+                        setShowModal={setShowModal}
+                        toastRef={toastRef}
+                    />
+                )
+                break;
+            case "direccion":
+                setRenderComponent(
+                    <ChangeDireccionForm
                         setShowModal={setShowModal}
                         toastRef={toastRef}
                     />
