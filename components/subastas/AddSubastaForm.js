@@ -6,6 +6,8 @@ import CountryPicker from 'react-native-country-picker-modal'
 import MapView from 'react-native-maps'
 import uuid from 'random-uuid-v4'
 import { DateTimePickerModal } from 'react-native-modal-datetime-picker'
+import CurrencyPicker from "react-native-currency-picker"
+
 import { formatPhone, getCurrentLocation, loadImageFromGallery, validateEmail } from '../../utils/helpers'
 import { addDocumentWithoutId, getCurrentUser, uploadImage } from '../../utils/actions'
 import Modal from '../../components/Modal'
@@ -107,7 +109,7 @@ export default function AddSubastaForm({ toastRef, setLoading, navigation }) {
             ratingTotal: 0,
             quantityVoting: 0,
             createAt: new Date(),
-            createBy: getCurrentUser().uid
+            rematador: getCurrentUser().uid
         }
         const responseAddDocument = await addDocumentWithoutId("subastas", subasta)
         setLoading(false)
@@ -234,13 +236,14 @@ export default function AddSubastaForm({ toastRef, setLoading, navigation }) {
                 locationSubasta={locationSubasta}
             />
             {inputs.map((input, key)=>(
-            <View style={styles.inputContainer}>
-            <Input placeholder={"Ingresar nombre del producto"} value={input.value}  onChangeText={(text)=>inputHandler(text,key)}/>
-            <Input placeholder={"Ingresar descripcion del producto"} value={input.value}  onChangeText={(text)=>inputHandlerDescripcion(text,key)}/>
-            <Input placeholder={"Ingresar cantidad de productos"} value={input.value}  onChangeText={(text)=>inputHandlerCantidad(text,key)}/>
-            <Input placeholder={"Ingresar artista de la obra (opcional)"} value={input.value}  onChangeText={(text)=>inputHandlerArtista(text,key)}/>
-            <Input placeholder={"Ingresar fecha de la obra (opcional)"} value={input.value}  onChangeText={(text)=>inputHandlerFechaObra(text,key)}/>
-            <Input placeholder={"Ingresar historia de la obra (opcional)"} value={input.value}  onChangeText={(text)=>inputHandlerHistoriaObra(text,key)}/>
+            <View style={styles.viewForm}>
+            <Text style={{fontSize: 15, marginBottom:10,fontWeight:'bold'}}>Descripcion del Catálogo:</Text>
+            <Input placeholder={"Nombre del producto"} value={input.value}  onChangeText={(text)=>inputHandler(text,key)}/>
+            <Input placeholder={"Descripcion del producto"} value={input.value}  onChangeText={(text)=>inputHandlerDescripcion(text,key)}/>
+            <Input placeholder={"Cantidad de productos"} value={input.value}  onChangeText={(text)=>inputHandlerCantidad(text,key)}/>
+            <Input placeholder={"Artista de la obra (opcional)"} value={input.value}  onChangeText={(text)=>inputHandlerArtista(text,key)}/>
+            <Input placeholder={"Fecha de la obra (opcional)"} value={input.value}  onChangeText={(text)=>inputHandlerFechaObra(text,key)}/>
+            <Input placeholder={"Historia de la obra (opcional)"} value={input.value}  onChangeText={(text)=>inputHandlerHistoriaObra(text,key)}/>
             <TouchableOpacity onPress = {()=> deleteHandler(key)}>
             <Text style={{color: "red", textAlign:"center",fontSize: 13, marginBottom:10 }}>Borrar producto del catalogo</Text>
             </TouchableOpacity> 
@@ -448,13 +451,13 @@ function FormAdd({
     return (
         <View style={styles.viewForm}>
             <Input
-                placeholder="Nombre de la subasta..."
+                placeholder="Nombre de la subasta"
                 defaultValue={formData.name}
                 onChange={(e) => onChange(e, "name")}
                 errorMessage={errorName}
             />
             <Input
-                placeholder="Dirección de la subasta..."
+                placeholder="Dirección de la subasta"
                 defaultValue={formData.address}
                 onChange={(e) => onChange(e, "address")}
                 errorMessage={errorAddress}
@@ -467,7 +470,7 @@ function FormAdd({
             />
             <Input
                 keyboardType="email-address"
-                placeholder="Email de la subasta..."
+                placeholder="Email de la subasta"
                 defaultValue={formData.email}
                 onChange={(e) => onChange(e, "email")}
                 errorMessage={errorEmail}
@@ -489,7 +492,7 @@ function FormAdd({
                     }}
                 />
                 <Input
-                    placeholder="WhatsApp de la subasta..."
+                    placeholder="WhatsApp de la subasta"
                     keyboardType="phone-pad"
                     containerStyle={styles.inputPhone}
                     defaultValue={formData.phone}
@@ -497,15 +500,55 @@ function FormAdd({
                     errorMessage={errorPhone}
                 />
             </View>
+            <View style={styles.phoneView}>
+                <CurrencyPicker
+                    enable={true}
+                    darkMode={false}
+                    currencyCode={"ARS"}
+                    showFlag={true}
+                    showCurrencyName={false}
+                    showCurrencyCode={true}
+                    onSelectCurrency={(data) => { console.log("DATA", data) }}
+                    onOpen={() => {console.log("Open")}}
+                    onClose={() => {console.log("Close")}}
+                    showNativeSymbol={true}
+                    showSymbol={false}
+                    containerStyle={{
+                        container: {},
+                        flagWidth: 25,
+                        currencyCodeStyle: {},
+                        currencyNameStyle: {},
+                        symbolStyle: {},
+                        symbolNativeStyle: {}
+                    }}
+                    modalStyle={{
+                        container: {},
+                        searchStyle: {},
+                        tileStyle: {},
+                        itemStyle: {
+                            itemContainer: {},
+                            flagWidth: 25,
+                            currencyCodeStyle: {},
+                            currencyNameStyle: {},
+                            symbolStyle: {},
+                            symbolNativeStyle: {}
+                        }
+                    }}
+                    title={"Currency"}
+                    searchPlaceholder={"Search"}
+                    showCloseButton={true}
+                    showModalTitle={true}
+                    />               
+                <Input
+                    placeholder="Precio base"
+                    containerStyle={styles.inputPhone}
+                    defaultValue={formData.precioBase}
+                    onChange={(e) => onChange(e, "precioBase")}
+                    errorMessage={errorPrecioBase}
+                />
+            </View>
             <Input
-                placeholder="Ingresar el precio base de la subasta..."
-                containerStyle={styles.textArea}
-                defaultValue={formData.precioBase}
-                onChange={(e) => onChange(e, "precioBase")}
-                errorMessage={errorPrecioBase}
-            />
-            <Input
-                placeholder="Descripción de la subasta..."
+                placeholder="Descripción de la subasta"
                 multiline
                 containerStyle={styles.textArea}
                 defaultValue={formData.description}
