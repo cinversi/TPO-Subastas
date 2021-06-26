@@ -28,6 +28,8 @@ export default function AddSubastaForm({ toastRef, setLoading, navigation }) {
     const [isDatePickerVisible, setDatePickerVisibility] = useState(false)
     const [inputs, setInputs] = useState([{key: '',nombreItem: '',descripcion: '',cantidad: '',artista:'',fechaObra:'',historiaObra:''}])
     const [pujas,setPujas]=useState(null)
+    const [fechaSubasta,setFecha]=useState(null)
+    const [horaSubasta,setHora]=useState(null)
 
     const addHandler = ()=>{
         const _inputs = [...inputs];
@@ -109,8 +111,12 @@ export default function AddSubastaForm({ toastRef, setLoading, navigation }) {
             ratingTotal: 0,
             quantityVoting: 0,
             createAt: new Date(),
-            rematador: getCurrentUser().uid
+            rematador: getCurrentUser().uid,
+            fechaSubastar:fechaSubasta,
+            horaSubastar:horaSubasta
+            
         }
+
         const responseAddDocument = await addDocumentWithoutId("subastas", subasta)
         setLoading(false)
 
@@ -193,7 +199,6 @@ export default function AddSubastaForm({ toastRef, setLoading, navigation }) {
         console.log("esta es la fecha",date)
     }
     
-
     function getParsedDate(date){
         const oldDate = new Date(date)
         const day = oldDate.getDate()
@@ -204,11 +209,10 @@ export default function AddSubastaForm({ toastRef, setLoading, navigation }) {
 
         const fecha = day + '-' + month + '-' + year
         const hora = hour + ':' + minutes
-        console.log(fecha)
-        console.log(hora)
+        setFecha(fecha)
+        setHora(hora)
     }
         
-
     const clearErrors = () => {
         setErrorAddress(null)
         setErrorDescription(null)
