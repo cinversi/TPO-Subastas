@@ -1,22 +1,37 @@
-import React, { useState } from 'react'
+import React, {useState, useRef, useEffect} from 'react'
 import { StyleSheet, Text, View } from 'react-native'
 import { ListItem, Icon } from 'react-native-elements'
 import { map } from 'lodash';
+import Toast from 'react-native-easy-toast'
+import { getCurrentUser } from '../../utils/actions'
+import { useNavigation } from '@react-navigation/native'
 
 import Modal from '../Modal';
 import ChangeDisplayNameForm from '../../components/account/ChangeDisplayNameForm';
 import ChangeEmailForm from '../../components/account/ChangeEmailForm';
 import ChangePasswordForm from '../../components/account/ChangePasswordForm';
-import ChangeDireccionForm from './ChangeDireccionForm';
+import ChangeDireccionForm from '../../components/account/ChangeDireccionForm';
+import InfoUser from '../../components/account/InfoUser'
+import Loading from '../../components/Loading'
 
-export default function AccountOptions({ user, toastRef, setRelodUser }) {
+export default function AccountOptions() {
     const [showModal, setShowModal] = useState(false)
     const [renderComponent, setRenderComponent] = useState(null)
+    const [loading, setLoading] = useState(false)
+    const [loadingText, setLoadingText] = useState("")
+    const [reloadUser, setReloadUser] = useState(false)
+    const [user, setUser] = useState()
+    const toastRef = useRef()
+    const navigation = useNavigation()
+    useEffect(() => {
+        setUser(getCurrentUser())
+        setReloadUser(false)
+    }, [reloadUser])
 
     const generateOptions = () => {
         return [
             {
-                title : "Cambiar Nombres y Apellidos",
+                title : "Cambiar Nombre y Apellido",
                 iconNameLeft: "account-circle",
                 iconColorLeft: "#a7bfd3",
                 iconNameRight: "chevron-right",
@@ -58,7 +73,7 @@ export default function AccountOptions({ user, toastRef, setRelodUser }) {
                         displayName={user.displayName}
                         setShowModal={setShowModal}
                         toastRef={toastRef}
-                        setRelodUser={setRelodUser}
+                        setRelodUser={setReloadUser}
                     />
                 )
                 break;
@@ -68,7 +83,7 @@ export default function AccountOptions({ user, toastRef, setRelodUser }) {
                         email={user.email}
                         setShowModal={setShowModal}
                         toastRef={toastRef}
-                        setRelodUser={setRelodUser}
+                        setRelodUser={setReloadUser}
                     />
                 )
                 break;
@@ -95,7 +110,18 @@ export default function AccountOptions({ user, toastRef, setRelodUser }) {
     const menuOptions = generateOptions();
 
     return (
-        <View>
+        <View style={styles.container}>
+            {
+                user && (
+                    <View>
+                        <InfoUser 
+                            user={user} 
+                            setLoading={setLoading} 
+                            setLoadingText={setLoadingText}
+                            />
+                    </View>
+                ) 
+            }
             {
                 map(menuOptions, (menu, index) => (
                     <ListItem
@@ -124,11 +150,17 @@ export default function AccountOptions({ user, toastRef, setRelodUser }) {
                     renderComponent
                 }
             </Modal>
+            <Toast ref={toastRef} position="center" opacity={0.9}/>
+            <Loading isVisible={loading} text={loadingText}/>
         </View>
     )
 }
 
 const styles = StyleSheet.create({
+    container:{
+        minHeight:"100%",
+        backgroundColor:"#f9f9f9"
+    },
     menuItem: {
         borderBottomWidth: 1,
         borderBottomColor: "#a7bfd3"

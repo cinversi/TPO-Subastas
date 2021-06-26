@@ -6,6 +6,7 @@ import Login from '../screens/account/Login'
 import Register from '../screens/account/Register'
 import RecoverPassword from '../screens/account/RecoverPassword'
 import GeneratePassword from '../screens/account/GeneratePassword'
+import AccountOptions from '../components/account/AccountOptions'
 
 const Stack = createStackNavigator()
 
@@ -36,6 +37,11 @@ export default function AccountStack() {
                 name="generate-password"
                 component={GeneratePassword}
                 options={{ title: "Genera tu Contraseña" }}
+            />
+            <Stack.Screen
+                name="account-options"
+                component={AccountOptions}
+                options={{ title: "Ver datos personales" }}
             />
         </Stack.Navigator>
     )
