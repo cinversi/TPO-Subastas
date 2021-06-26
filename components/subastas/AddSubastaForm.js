@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from 'react'
-import { Alert, Dimensions, StyleSheet, Text, View, ScrollView } from 'react-native'
+import { Alert, Dimensions, StyleSheet, Text, TouchableOpacity, View, ScrollView } from 'react-native'
 import { Avatar, Button, Icon, Input, Image } from 'react-native-elements'
 import { map, size, filter, isEmpty } from 'lodash' 
 import CountryPicker from 'react-native-country-picker-modal'
 import MapView from 'react-native-maps'
 import uuid from 'random-uuid-v4'
-
+import { DateTimePickerModal } from 'react-native-modal-datetime-picker'
 import { formatPhone, getCurrentLocation, loadImageFromGallery, validateEmail } from '../../utils/helpers'
 import { addDocumentWithoutId, getCurrentUser, uploadImage } from '../../utils/actions'
 import Modal from '../../components/Modal'
@@ -19,9 +19,69 @@ export default function AddSubastaForm({ toastRef, setLoading, navigation }) {
     const [errorEmail, setErrorEmail] = useState(null)
     const [errorAddress, setErrorAddress] = useState(null)
     const [errorPhone, setErrorPhone] = useState(null)
+    const [errorPrecioBase, setErrorPrecioBase] = useState(null)
     const [imagesSelected, setImagesSelected] = useState([])
     const [isVisibleMap, setIsVisibleMap] = useState(false)
     const [locationSubasta, setLocationSubasta] = useState(null)
+    const [isDatePickerVisible, setDatePickerVisibility] = useState(false)
+    const [inputs, setInputs] = useState([{key: '',nombreItem: '',descripcion: '',cantidad: '',artista:'',fechaObra:'',historiaObra:''}])
+    const [pujas,setPujas]=useState(null)
+
+    const addHandler = ()=>{
+        const _inputs = [...inputs];
+        _inputs.push({key: '',nombreItem: '',descripcion: '',cantidad: '',artista:'',fechaObra:'',historiaObra:''});
+        setInputs(_inputs);
+      }
+ 
+      const deleteHandler = (key)=>{
+        const _inputs = inputs.filter((input,index) => index != key);
+        setInputs(_inputs);
+      }
+ 
+      const inputHandler = (text, key)=>{
+        const _inputs = [...inputs];
+        _inputs[key].nombreItem = text;
+        _inputs[key].key   = key;
+        setInputs(_inputs);
+        
+      }    
+ 
+      const inputHandlerDescripcion = (text, key)=>{
+        const _inputs = [...inputs];
+        _inputs[key].descripcion = text;
+        _inputs[key].key   = key;
+        setInputs(_inputs);
+        
+      }
+ 
+      const inputHandlerCantidad = (text, key)=>{
+        const _inputs = [...inputs];
+        _inputs[key].cantidad = text;
+        _inputs[key].key   = key;
+        setInputs(_inputs);
+        
+      }
+
+      const inputHandlerArtista = (text, key)=>{
+        const _inputs = [...inputs];
+        _inputs[key].artista = text;
+        _inputs[key].key   = key;
+        setInputs(_inputs);        
+      }
+ 
+      const inputHandlerFechaObra= (text, key)=>{
+        const _inputs = [...inputs];
+        _inputs[key].fechaObra = text;
+        _inputs[key].key   = key;
+        setInputs(_inputs);        
+      }
+ 
+      const inputHandlerHistoriaObra= (text, key)=>{
+        const _inputs = [...inputs];
+        _inputs[key].historiaObra = text;
+        _inputs[key].key   = key;
+        setInputs(_inputs);        
+      }
 
     const addSubasta = async() => {
         if (!validForm()) {
@@ -39,6 +99,10 @@ export default function AddSubastaForm({ toastRef, setLoading, navigation }) {
             location: locationSubasta,
             email: formData.email,
             images: responseUploadImages,
+            catalogo:inputs,
+            listadoPujas:pujas,
+            precioBase: formData.precioBase,
+            precioFinal: 0,
             rating: 0,
             ratingTotal: 0,
             quantityVoting: 0,
@@ -98,6 +162,11 @@ export default function AddSubastaForm({ toastRef, setLoading, navigation }) {
             isValid = false
         }
 
+        if (isEmpty(formData.precioBase)) {
+            setErrorPrecioBase("Debes ingresar un precio base de la subasta.")
+            isValid = false
+        }
+
         if (!locationSubasta) {
             toastRef.current.show("Debes localizar a la subasta en el mapa.", 3000)
             isValid = false
@@ -109,12 +178,42 @@ export default function AddSubastaForm({ toastRef, setLoading, navigation }) {
         return isValid
     }
 
+    const showDatePicker = () => {
+        setDatePickerVisibility(true)
+    }
+    const hideDatePicker = () => {
+        setDatePickerVisibility(false)
+    }
+    const handleConfirm = (date) => {
+        console.warn("A date has been picked: ", date)
+        hideDatePicker()
+        getParsedDate(date)
+        console.log("esta es la fecha",date)
+    }
+    
+
+    function getParsedDate(date){
+        const oldDate = new Date(date)
+        const day = oldDate.getDate()
+        const month = oldDate.getMonth() + 1;
+        const year = oldDate.getFullYear()
+        const hour = oldDate.getHours() + 3;
+        const minutes = oldDate.getUTCMinutes()
+
+        const fecha = day + '-' + month + '-' + year
+        const hora = hour + ':' + minutes
+        console.log(fecha)
+        console.log(hora)
+    }
+        
+
     const clearErrors = () => {
         setErrorAddress(null)
         setErrorDescription(null)
         setErrorEmail(null)
         setErrorName(null)
         setErrorPhone(null)
+        setErrorPrecioBase(null)
     }
 
     return (
@@ -130,9 +229,46 @@ export default function AddSubastaForm({ toastRef, setLoading, navigation }) {
                 errorEmail={errorEmail}
                 errorAddress={errorAddress}
                 errorPhone={errorPhone}
+                errorPrecioBase={errorPrecioBase}
                 setIsVisibleMap={setIsVisibleMap}
                 locationSubasta={locationSubasta}
             />
+            {inputs.map((input, key)=>(
+            <View style={styles.inputContainer}>
+            <Input placeholder={"Ingresar nombre del producto"} value={input.value}  onChangeText={(text)=>inputHandler(text,key)}/>
+            <Input placeholder={"Ingresar descripcion del producto"} value={input.value}  onChangeText={(text)=>inputHandlerDescripcion(text,key)}/>
+            <Input placeholder={"Ingresar cantidad de productos"} value={input.value}  onChangeText={(text)=>inputHandlerCantidad(text,key)}/>
+            <Input placeholder={"Ingresar artista de la obra (opcional)"} value={input.value}  onChangeText={(text)=>inputHandlerArtista(text,key)}/>
+            <Input placeholder={"Ingresar fecha de la obra (opcional)"} value={input.value}  onChangeText={(text)=>inputHandlerFechaObra(text,key)}/>
+            <Input placeholder={"Ingresar historia de la obra (opcional)"} value={input.value}  onChangeText={(text)=>inputHandlerHistoriaObra(text,key)}/>
+            <TouchableOpacity onPress = {()=> deleteHandler(key)}>
+            <Text style={{color: "red", textAlign:"center",fontSize: 13, marginBottom:10 }}>Borrar producto del catalogo</Text>
+            </TouchableOpacity> 
+            </View>
+            ))}
+            <Icon
+                type="material-community"
+                name="plus"
+                color="rgba(111, 202, 186, 1)"
+                reverse
+                containerStyle={styles.btnContainer}
+                onPress={addHandler} 
+            />
+            <View>
+              <Button
+                title="Seleccionar Fecha" 
+                onPress={showDatePicker} 
+                buttonStyle={styles.btnAddFecha}
+              />
+              <DateTimePickerModal
+                isVisible={isDatePickerVisible}
+                mode="datetime"
+                locale="es-AR"
+                timeZoneOffsetInMinutes={0}
+                onConfirm={handleConfirm}
+                onCancel={hideDatePicker}
+              />
+            </View>
             <UploadImage
                 toastRef={toastRef}
                 imagesSelected={imagesSelected}
@@ -296,6 +432,7 @@ function FormAdd({
     errorDescription, 
     errorEmail, 
     errorAddress, 
+    errorPrecioBase,
     errorPhone, 
     setIsVisibleMap,
     locationSubasta
@@ -361,6 +498,13 @@ function FormAdd({
                 />
             </View>
             <Input
+                placeholder="Ingresar el precio base de la subasta..."
+                containerStyle={styles.textArea}
+                defaultValue={formData.precioBase}
+                onChange={(e) => onChange(e, "precioBase")}
+                errorMessage={errorPrecioBase}
+            />
+            <Input
                 placeholder="Descripción de la subasta..."
                 multiline
                 containerStyle={styles.textArea}
@@ -380,7 +524,8 @@ const defaultFormValues = () => {
         phone: "",
         address: "",
         country: "AR",
-        callingCode: "54"
+        callingCode: "54",
+        precioBase:""
     }
 }
 
@@ -392,7 +537,7 @@ const styles = StyleSheet.create({
         marginHorizontal: 10,
     },
     textArea: {
-        height: 100,
+        height: 70,
         width: "100%"
     },
     phoneView: {
@@ -406,10 +551,21 @@ const styles = StyleSheet.create({
         margin: 20,
         backgroundColor: "#442484"
     },
+    btnAddFecha: {
+        margin: 20,
+        backgroundColor: "#689bcc"
+    },
+    btnContainer: {
+        bottom: 10,
+        marginRight: 10,
+        shadowColor: "black",
+        shadowOffset: { width: 2, height: 2},
+        shadowOpacity: 0.5
+    },
     viewImages: {
         flexDirection: "row",
         marginHorizontal: 20,
-        marginTop: 30
+        marginTop: 30,
     },
     containerIcon: {
         alignItems: "center",
