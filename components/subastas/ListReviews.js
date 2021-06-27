@@ -36,7 +36,7 @@ export default function ListReviews({ navigation, idSubasta }) {
                         buttonStyle={styles.btnAddReview}
                         title="Ver precio"
                         titleStyle={styles.btnTitelAddReview}
-                        onPress={() => navigation.navigate("add-review-subasta", { idSubasta })}
+                        onPress={() => navigation.navigate("add-pujas-subasta", { idSubasta })}
                         icon={{
                             type: "material-community",
                             name: "currency-usd",

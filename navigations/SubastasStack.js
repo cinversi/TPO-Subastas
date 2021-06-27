@@ -4,7 +4,7 @@ import { createStackNavigator } from '@react-navigation/stack'
 import Subastas from '../screens/subastas/Subastas'
 import AddSubasta from '../screens/subastas/AddSubasta'
 import Subasta from '../screens/subastas/Subasta'
-import AddReviewSubasta from '../screens/subastas/AddReviewSubasta'
+import AddPujasSubasta from '../screens/subastas/AddPujasSubasta'
 
 const Stack = createStackNavigator()
 
@@ -26,8 +26,8 @@ export default function SubastasStack() {
                 component={Subasta}
             />
             <Stack.Screen
-                name="add-review-subasta"
-                component={AddReviewSubasta}
+                name="add-pujas-subasta"
+                component={AddPujasSubasta}
                 options={{ title: "Subasta" }}
             />
         </Stack.Navigator>

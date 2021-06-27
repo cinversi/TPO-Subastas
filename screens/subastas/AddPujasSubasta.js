@@ -1,6 +1,6 @@
 import React, { useState, useRef,useCallback } from 'react'
 import { StyleSheet, Text, View,FlatList } from 'react-native'
-import { AirbnbRating, Button, Input } from 'react-native-elements'
+import { Button, Input } from 'react-native-elements'
 import { useFocusEffect } from '@react-navigation/native'
 import Toast from 'react-native-easy-toast'
 import { isEmpty } from 'lodash'
@@ -117,10 +117,15 @@ export default function AddReviewSubasta({ navigation, route }) {
     }
  
     return (
-        <KeyboardAwareScrollView style={styles.viewBody}>
+        <View style={styles.viewBody}>
             <View>
-                <Text style={{fontSize: 30,textAlign:"center"}}>Precio actual</Text>
-               <Text style={styles.viewPrecioBase}>${subasta.precioBase}</Text>
+                <Text style={styles.viewInfo}>{subasta.name}</Text>
+                <Text style={styles.viewInfoHora}>Hora de Finalización: {subasta.horaFinSubasta}hs</Text>
+                <Text style={styles.viewPrecioBaseText}>Precio base</Text> 
+                <Text style={styles.viewPrecioBase}>${subasta.precioBase}</Text>
+                <Text style={styles.viewPrecioActualText}>Precio actual</Text>
+                <Text style={styles.viewPrecioActual}>${subasta.precioBase}</Text>
+                <Text style={styles.viewUltimasPujas}>Ultimas pujas:</Text>
             </View>
             <FlatList
                         data={subasta.pujas}
@@ -134,7 +139,7 @@ export default function AddReviewSubasta({ navigation, route }) {
                     />
             <View style={styles.formReview}>
                 <Input
-                    placeholder="Valor a pujar"
+                    placeholder="$ Ingresar valor a pujar"
                     containerStyle={styles.input}
                     onChange={(e) => setPuja(e.nativeEvent.text)}
                     errorMessage={errorReview}
@@ -143,12 +148,12 @@ export default function AddReviewSubasta({ navigation, route }) {
                     title="Pujar"
                     containerStyle={styles.btnContainer}
                     buttonStyle={styles.btn}
-                    onPress={addPuja}
+                    //onPress={addPuja}
                 />
             </View>
             <Toast ref={toastRef} position="center" opacity={0.9}/>
-            <Loading isVisible={loading} text="Enviando comentario..."/>
-        </KeyboardAwareScrollView>
+            <Loading isVisible={loading} text="Enviando puja..."/>
+        </View>
     )
 }
  
@@ -160,15 +165,49 @@ const styles = StyleSheet.create({
     viewBody: {
         flex: 1
     },
+    viewPrecioBaseText:{
+        fontSize:20,
+        textAlign:"center",
+        color:"#9c63c9",
+        marginTop: 15
+    },
     viewPrecioBase:{
+        fontSize:20,
+        textAlign:"center",
+        color:"#9c63c9"
+    },
+    viewPrecioActualText:{
         fontSize:30,
-        textAlign:"center"
+        textAlign:"center",
+        color:"#442484",
+        fontWeight:"bold",
+        marginTop: 15
+    },
+    viewPrecioActual:{
+        fontSize:30,
+        textAlign:"center",
+        color:"#442484",
+        fontWeight:"bold"
+    },
+    viewInfo:{
+        fontSize:15,
+        textAlign:"center",
+        fontWeight:"bold"
+    },
+    viewInfoHora:{
+        fontSize:15,
+        textAlign:"center",
+        fontWeight:"bold"
+    },
+    viewUltimasPujas:{
+        fontSize:15,
+        marginTop: 20
     },
     formReview: {
         flex: 1,
         alignItems: "center",
         margin: 10,
-        marginTop: 40
+        marginTop: 20
     },
     input: {
         marginBottom: 10
@@ -182,8 +221,7 @@ const styles = StyleSheet.create({
     btnContainer: {
         flex: 1, 
         justifyContent: "flex-end",
-        marginTop: 20,
-        marginBottom: 10,
+        marginBottom: 20,
         width: "95%"
     },
     btn: {
