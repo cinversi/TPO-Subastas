@@ -30,6 +30,9 @@ export default function AddSubastaForm({ toastRef, setLoading, navigation }) {
     const [pujas,setPujas]=useState(null)
     const [fechaSubasta,setFecha]=useState(null)
     const [horaSubasta,setHora]=useState(null)
+    const [horaFin,setHoraFin]=useState(null)
+    const [isHourPickerVisible, setHourPickerVisibility] = useState(false)
+
 
     const addHandler = ()=>{
         const _inputs = [...inputs];
@@ -115,6 +118,7 @@ export default function AddSubastaForm({ toastRef, setLoading, navigation }) {
             rematador: getCurrentUser().uid,
             fechaSubastar:fechaSubasta,
             horaSubastar:horaSubasta,
+            horaFinSubasta:horaFin,
             categoria: calcularCategoria(formData.precioBase)
         }
         
@@ -217,6 +221,27 @@ export default function AddSubastaForm({ toastRef, setLoading, navigation }) {
         setFecha(fecha)
         setHora(hora)
     }
+
+    const showHourPicker = () => {
+        setHourPickerVisibility(true)
+    }
+    const hideHourPicker = () => {
+        setHourPickerVisibility(false)
+    }
+    const handleHourConfirm = (h) => {
+        console.warn("A hour has been picked: ", h)
+        hideHourPicker()
+        getParsedHour(h)
+    }
+    
+    function getParsedHour(h){
+        const oldHour = new Date(h)
+        const hour = oldHour.getHours() + 3;
+        const minutes = oldHour.getUTCMinutes()
+
+        const hora = hour + ':' + minutes
+        setHoraFin(hora)
+    }
     
     const calcularCategoria = (precioB) => {
         let p=""
@@ -316,7 +341,7 @@ export default function AddSubastaForm({ toastRef, setLoading, navigation }) {
             />
             <View>
               <Button
-                title="Seleccionar Fecha" 
+                title="Ingresar Fecha y Hora de Inicio" 
                 onPress={showDatePicker} 
                 buttonStyle={styles.btnAddFecha}
               />
@@ -327,6 +352,19 @@ export default function AddSubastaForm({ toastRef, setLoading, navigation }) {
                 timeZoneOffsetInMinutes={0}
                 onConfirm={handleConfirm}
                 onCancel={hideDatePicker}
+              />
+              <Button
+                title="Ingresar Hora de Finalización" 
+                onPress={showHourPicker} 
+                buttonStyle={styles.btnAddHora}
+              />
+              <DateTimePickerModal
+                isVisible={isHourPickerVisible}
+                mode="time"
+                locale="es-AR"
+                timeZoneOffsetInMinutes={0}
+                onConfirm={handleHourConfirm}
+                onCancel={hideHourPicker}
               />
             </View>
             <UploadImage
@@ -652,8 +690,12 @@ const styles = StyleSheet.create({
         backgroundColor: "#442484"
     },
     btnAddFecha: {
-        margin: 20,
-        backgroundColor: "#689bcc"
+        margin: 10,
+        backgroundColor: "#b05777"
+    },
+    btnAddHora: {
+        margin: 10,
+        backgroundColor: "#b05777"
     },
     btnContainer: {
         bottom: 10,

@@ -28,7 +28,7 @@ export default function SubastasStack() {
             <Stack.Screen
                 name="add-review-subasta"
                 component={AddReviewSubasta}
-                options={{ title: "Nuevo Comentario" }}
+                options={{ title: "Subasta" }}
             />
         </Stack.Navigator>
     )
