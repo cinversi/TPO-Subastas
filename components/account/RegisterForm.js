@@ -69,20 +69,19 @@ export default function RegisterForm() {
             isValid = false
         }
 
-        if(size(formData.dni) < 6) {
-
-            setErrorDNI("El dni debe contener al menos seis números.")
-
+        if(isNaN(formData.dni)) {
+            setErrorDNI("Debes ingresar un dni válido.")
             isValid = false
+        }
 
+        if(size(formData.dni) < 6) {
+            setErrorDNI("El dni debe contener al menos seis números.")
+            isValid = false
         }
 
         if(size(formData.dni) > 8) {
-
             setErrorDNI("El dni debe contener menos de ocho números.")
-
             isValid = false
-
         }
  
         if(isEmpty(formData.direccion)) {

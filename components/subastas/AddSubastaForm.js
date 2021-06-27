@@ -106,6 +106,7 @@ export default function AddSubastaForm({ toastRef, setLoading, navigation }) {
             catalogo:inputs,
             listadoPujas:pujas,
             precioBase: formData.precioBase,
+            moneda:'ARS',
             precioFinal: 0,
             rating: 0,
             ratingTotal: 0,
@@ -113,10 +114,10 @@ export default function AddSubastaForm({ toastRef, setLoading, navigation }) {
             createAt: new Date(),
             rematador: getCurrentUser().uid,
             fechaSubastar:fechaSubasta,
-            horaSubastar:horaSubasta
-            
+            horaSubastar:horaSubasta,
+            categoria: calcularCategoria(formData.precioBase)
         }
-
+        
         const responseAddDocument = await addDocumentWithoutId("subastas", subasta)
         setLoading(false)
 
@@ -175,6 +176,11 @@ export default function AddSubastaForm({ toastRef, setLoading, navigation }) {
             isValid = false
         }
 
+        if(isNaN(formData.precioBase)) {
+            setErrorDNI("Debes ingresar un precio base válido.")
+            isValid = false
+        }
+
         if (!locationSubasta) {
             toastRef.current.show("Debes localizar a la subasta en el mapa.", 3000)
             isValid = false
@@ -196,7 +202,6 @@ export default function AddSubastaForm({ toastRef, setLoading, navigation }) {
         console.warn("A date has been picked: ", date)
         hideDatePicker()
         getParsedDate(date)
-        console.log("esta es la fecha",date)
     }
     
     function getParsedDate(date){
@@ -212,7 +217,31 @@ export default function AddSubastaForm({ toastRef, setLoading, navigation }) {
         setFecha(fecha)
         setHora(hora)
     }
-        
+    
+    const calcularCategoria = (precioB) => {
+        let p=""
+        if (precioB < 10000) {
+            p="comun"
+            return p
+        }
+        else if(precioB < 50000){
+            p="especial"
+            return p
+        }
+        else if(precioB < 100000){
+            p="plata"
+            return p
+        }
+        else if(precioB <= 500000){
+            p="oro"
+            return p
+        }
+        else if(precioB > 500000){
+            p="platino"
+            return p
+        }
+    }
+
     const clearErrors = () => {
         setErrorAddress(null)
         setErrorDescription(null)
@@ -242,12 +271,36 @@ export default function AddSubastaForm({ toastRef, setLoading, navigation }) {
             {inputs.map((input, key)=>(
             <View style={styles.viewForm}>
             <Text style={{fontSize: 15, marginBottom:10,fontWeight:'bold'}}>Descripcion del Catálogo:</Text>
-            <Input placeholder={"Nombre del producto"} value={input.value}  onChangeText={(text)=>inputHandler(text,key)}/>
-            <Input placeholder={"Descripcion del producto"} value={input.value}  onChangeText={(text)=>inputHandlerDescripcion(text,key)}/>
-            <Input placeholder={"Cantidad de productos"} value={input.value}  onChangeText={(text)=>inputHandlerCantidad(text,key)}/>
-            <Input placeholder={"Artista de la obra (opcional)"} value={input.value}  onChangeText={(text)=>inputHandlerArtista(text,key)}/>
-            <Input placeholder={"Fecha de la obra (opcional)"} value={input.value}  onChangeText={(text)=>inputHandlerFechaObra(text,key)}/>
-            <Input placeholder={"Historia de la obra (opcional)"} value={input.value}  onChangeText={(text)=>inputHandlerHistoriaObra(text,key)}/>
+            <Input 
+                placeholder={"Nombre del producto"} 
+                value={input.value}  
+                onChangeText={(text)=>inputHandler(text,key)}
+                />
+            <Input 
+                placeholder={"Descripcion del producto"} 
+                value={input.value}  
+                onChangeText={(text)=>inputHandlerDescripcion(text,key)}
+                />
+            <Input 
+                placeholder={"Cantidad de productos"} 
+                value={input.value}  
+                onChangeText={(text)=>inputHandlerCantidad(text,key)}
+                />
+            <Input 
+                placeholder={"Artista de la obra (opcional)"} 
+                value={input.value}  
+                onChangeText={(text)=>inputHandlerArtista(text,key)}
+                />
+            <Input 
+                placeholder={"Fecha de la obra (opcional)"} 
+                value={input.value}  
+                onChangeText={(text)=>inputHandlerFechaObra(text,key)}
+                />
+            <Input 
+                placeholder={"Historia de la obra (opcional)"} 
+                value={input.value}  
+                onChangeText={(text)=>inputHandlerHistoriaObra(text,key)}
+                />
             <TouchableOpacity onPress = {()=> deleteHandler(key)}>
             <Text style={{color: "red", textAlign:"center",fontSize: 13, marginBottom:10 }}>Borrar producto del catalogo</Text>
             </TouchableOpacity> 
