@@ -1,8 +1,6 @@
-import { size } from 'lodash'
 import React from 'react'
 import { ActivityIndicator, FlatList, StyleSheet, Text, View, TouchableOpacity } from 'react-native'
 import { Image } from 'react-native-elements'
-import { formatPhone } from '../../utils/helpers'
 
 export default function ListSubastas({ subastas, navigation, handleLoadMore }) {
     return (
@@ -20,8 +18,8 @@ export default function ListSubastas({ subastas, navigation, handleLoadMore }) {
     )
 }
 
-function Subasta({ subasta, navigation, handleLoadMore }) {
-    const { id, images, name, address, description, phone, callingCode } = subasta.item
+function Subasta({ subasta, navigation }) {
+    const { id, images, name, address, categoria, fechaSubastar } = subasta.item
     const imageSubasta = images[0]
 
     const goSubasta = () => {
@@ -42,14 +40,8 @@ function Subasta({ subasta, navigation, handleLoadMore }) {
                 <View>
                     <Text style={styles.subastaTitle}>{name}</Text>
                     <Text style={styles.subastaInformation}>{address}</Text>
-                    <Text style={styles.subastaInformation}>{formatPhone(callingCode, phone)}</Text>
-                    <Text style={styles.subastaDescription}>
-                        {
-                            size(description) > 0
-                                ? `${description.substr(0, 60)}...`
-                                : description
-                        }
-                    </Text>
+                    <Text style={styles.subastaInformation}>Categoría: {categoria}</Text>
+                    <Text style={styles.subastaInformation}>Fecha: {fechaSubastar}</Text>
                 </View>
             </View>
         </TouchableOpacity>
@@ -74,10 +66,5 @@ const styles = StyleSheet.create({
     subastaInformation: {
         paddingTop: 2,
         color: "grey"
-    },
-    subastaDescription: {
-        paddingTop: 2,
-        color: "grey",
-        width: "75%"
     }
 })

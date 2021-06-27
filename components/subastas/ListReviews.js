@@ -34,12 +34,12 @@ export default function ListReviews({ navigation, idSubasta }) {
                 userLogged ? (
                     <Button
                         buttonStyle={styles.btnAddReview}
-                        title="Escribe una opinión"
+                        title="Ver precio"
                         titleStyle={styles.btnTitelAddReview}
                         onPress={() => navigation.navigate("add-review-subasta", { idSubasta })}
                         icon={{
                             type: "material-community",
-                            name: "square-edit-outline",
+                            name: "currency-usd",
                             color: "#a376c7"
                         }}
                     />

@@ -127,7 +127,7 @@ export default function Subasta({ navigation, route }) {
             <TitleSubasta
                 name={subasta.name}
                 description={subasta.description}
-                rating={subasta.rating}
+                categoria={subasta.categoria}
             />
             <SubastaInfo
                 name={subasta.name}
@@ -332,19 +332,15 @@ function SubastaInfo({
     )
 }
 
-function TitleSubasta({ name, description, rating }) {
+function TitleSubasta({ name, description, categoria }) {
     return (
         <View style={styles.viewSubastaTitle}>
             <View style={styles.viewSubastaContainer}>
                 <Text style={styles.nameSubasta}>{name}</Text>
-                <Rating
-                    style={styles.rating}
-                    imageSize={20}
-                    readonly
-                    startingValue={parseFloat(rating)}
-                />
             </View>
             <Text style={styles.descriptionSubasta}>{description}</Text>
+            <Text style={styles.categoriaSubasta}>Categoría {categoria}</Text>
+
         </View>
     )
 }
@@ -365,16 +361,17 @@ const styles = StyleSheet.create({
         color: "gray",
         textAlign: "justify"
     },
-    rating: {
-        position: "absolute",
-        right: 0
-    },
     nameSubasta: {
         fontWeight: "bold"
     },
+    categoriaSubasta: {
+        fontWeight: "bold",
+        color:"#ffbc63",
+        marginTop:10
+    },
     viewSubastaInfo: {
         margin: 15,
-        marginTop: 25
+        marginTop: 15
     },
     subastaInfoTitle: {
         fontSize: 20,
