@@ -4,10 +4,9 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs'
 import { Icon } from 'react-native-elements'
 
 import SubastasStack from './SubastasStack'
-import FavoritesStack from './FavoritesStack'
-import TopSubastasStack from './TopSubastasStack'
 import SearchStack from './SearchStack'
 import AccountStack from './AccountStack'
+import MisSubastasStack from './MisSubastasStack'
 
 const Tab = createBottomTabNavigator()
 
@@ -16,13 +15,16 @@ export default function Navigation() {
         let iconName
         switch (route.name) {
             case "subastas":
-                iconName = "compass-outline"
+                iconName = "gavel"
                 break;
             case "search":
                 iconName = "magnify"
                 break;
+            case "mis-subastas":
+                iconName = "shopping"
+            break;
             case "account":
-                iconName = "home-outline"
+                iconName = "account-circle"
                 break;
         }
 
@@ -57,6 +59,11 @@ export default function Navigation() {
                     name="search"
                     component={SearchStack}
                     options={{ title: "Buscar" }}
+                />
+                <Tab.Screen
+                    name="mis-subastas"
+                    component={MisSubastasStack}
+                    options={{ title: "Mis Subastas" }}
                 />
                 <Tab.Screen
                     name="account"

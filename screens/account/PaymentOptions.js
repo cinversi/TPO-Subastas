@@ -7,7 +7,7 @@ import firebase from 'firebase/app'
 
 import Loading from '../../components/Loading'
 import ListPaymentOptions from '../../components/account/ListPaymentOptions'
-import { getMorePayments, getPayments } from '../../utils/actions'
+import { getCurrentUser, getDocumentById, getMorePayments, getPayments } from '../../utils/actions'
 
 
 export default function PaymentsOptions({ navigation }) {
@@ -15,6 +15,7 @@ export default function PaymentsOptions({ navigation }) {
     const [startPayment, setStartPayment] = useState(null)
     const [payments, setPayments] = useState([])
     const [loading, setLoading] = useState(false)
+    console.log("11111111111111111111111")
 
     const limitPayments = 7
 
@@ -28,18 +29,19 @@ export default function PaymentsOptions({ navigation }) {
         useCallback(() => {
             async function getData() {
                 setLoading(true)
-                const response = await getPayments(limitPayments)
-                if (response.statusResponse) {
-                    setStartPayment(response.startPayment)
-                    setPayments(response.payments)
-                }
+                const currentUser = getCurrentUser().uid;
+                console.log("llega aca!!!!2")
+                const response = await getDocumentById("users", currentUser);
+                console.log(response.document.medioPago)
+                //const response = await getPayments(limitPayments, currentUser)
+                setPayments(response.document.medioPago)
                 setLoading(false)
             }
             getData()
         }, [])
     )
 
-    const handleLoadMore = async() => {
+    /*const handleLoadMore = async() => {
         if (!startPayment) {
             return
         }
@@ -51,7 +53,7 @@ export default function PaymentsOptions({ navigation }) {
             setPayments([...payments, ...response.payments])
         }
         setLoading(false)
-    }
+    }*/
 
     if (user === null) {
         return <Loading isVisible={true} text="Cargando..."/>
@@ -64,7 +66,7 @@ export default function PaymentsOptions({ navigation }) {
                     <ListPaymentOptions
                         payments={payments}
                         navigation={navigation}
-                        handleLoadMore={handleLoadMore}
+                        handleLoadMore={() => {}}
                     />
                 ) : (
                     <View style={styles.notFoundView}>

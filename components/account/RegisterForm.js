@@ -18,15 +18,8 @@ export default function RegisterForm() {
     const [errorDireccion, setErrorDireccion] = useState("")
     const [loading, setLoading] = useState(false)
     const navigation = useNavigation()
- 
-    const mediosPago = {
-        number: '',
-        expiry: '',
-        cvc:'',
-        name:'',
-        postalCode:'',
-        type:''
-    }
+    const mediosPago = []
+    
     const onChange = (e,type) =>{
         setFormData({...formData, [type]:e.nativeEvent.text})
     }

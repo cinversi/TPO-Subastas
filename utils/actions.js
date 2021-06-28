@@ -10,6 +10,9 @@ import { map } from 'lodash'
 import { Alert } from 'react-native'
 import { Platform } from 'react-native'
 
+import uuid from 'random-uuid-v4'
+
+
 const db = firebase.firestore(firebaseApp)
 const fireSQL = new FireSQL(firebase.firestore(), { includeId: "id" })
 
@@ -499,11 +502,59 @@ export const addNewPuja = async(idSubasta,puja,uidUsuario,horario) => {
 export const addNewPaymentMethod = async(idUser,number,expiry,cvc,name,postalCode,type) => {
     const result = { statusResponse: true, error: null }
     try {
-        db.collection("users").doc(idUser).update({medioPago:firebase.firestore.FieldValue.arrayUnion(...[{number:number,expiry:expiry,cvc:cvc,name:name,postalCode:postalCode,type:type}])})
+        const paymentUuid = uuid();
+        db.collection("users").doc(idUser).update({medioPago:firebase.firestore.FieldValue.arrayUnion(...[{uuid:paymentUuid,number:number,expiry:expiry,cvc:cvc,name:name,postalCode:postalCode,type:type}])})
      } catch (error) {
         console.log(result)
         result.statusResponse = false
         result.error = error
     }
     return result   
+}
+
+export const getItemsCatalogo = async(limitSubastas) => {
+    const result = { statusResponse: true, error: null, subastas: [], startSubasta: null }
+    try {
+        const response = await db
+            .collection("subastas")
+            .orderBy("createAt", "desc")
+            .limit(limitSubastas)
+            .get()
+        if (response.docs.length > 0) {
+            result.startSubasta = response.docs[response.docs.length - 1]
+        }
+        response.forEach((doc) => {
+            const subasta = doc.data()
+            subasta.id = doc.id
+            result.subastas.push(subasta)
+        })
+    } catch (error) {
+        result.statusResponse = false
+        result.error = error
+    }
+    return result     
+}
+
+export const getMoreItemsCatalogo = async(limitSubastas, startSubasta) => {
+    const result = { statusResponse: true, error: null, subastas: [], startSubasta: null }
+    try {
+        const response = await db
+            .collection("subastas")
+            .orderBy("createAt", "desc")
+            .startAfter(startSubasta.data().createAt)
+            .limit(limitSubastas)
+            .get()
+        if (response.docs.length > 0) {
+            result.startSubasta = response.docs[response.docs.length - 1]
+        }
+        response.forEach((doc) => {
+            const subasta = doc.data()
+            subasta.id = doc.id
+            result.subastas.push(subasta)
+        })
+    } catch (error) {
+        result.statusResponse = false
+        result.error = error
+    }
+    return result     
 }

@@ -2,7 +2,7 @@ import React from 'react'
 import { ActivityIndicator, FlatList, StyleSheet, Text, View, TouchableOpacity } from 'react-native'
 import { Image } from 'react-native-elements'
 
-export default function ListSubastas({ subastas, navigation, handleLoadMore }) {
+export default function ListItems({ subastas, navigation, handleLoadMore }) {
     return (
         <View>
             <FlatList

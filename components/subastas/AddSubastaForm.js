@@ -28,6 +28,7 @@ export default function AddSubastaForm({ toastRef, setLoading, navigation }) {
     const [horaSubasta,setHora]=useState(null)
     const [horaFin,setHoraFin]=useState(null)
     const [isHourPickerVisible, setHourPickerVisibility] = useState(false)
+    const [dataMoneda, setDataMoneda] = useState("")
 
 
     const addHandler = ()=>{
@@ -102,7 +103,7 @@ export default function AddSubastaForm({ toastRef, setLoading, navigation }) {
             catalogo:inputs,
             listadoPujas:[{nombrePujador: 'app',valorPujado: formData.precioBase,horarioPuja:new Date().getDate()}],
             precioBase: formData.precioBase,
-            moneda:'ARS',
+            moneda:dataMoneda,
             precioFinal: 0,
             createAt: new Date(),
             rematador: getCurrentUser().uid,
@@ -111,7 +112,7 @@ export default function AddSubastaForm({ toastRef, setLoading, navigation }) {
             horaFinSubasta:horaFin,
             categoria: calcularCategoria(formData.precioBase)
         }
-        
+        console.log("esta es la moneda:",dataMoneda)
         const responseAddDocument = await addDocumentWithoutId("subastas", subasta)
         setLoading(false)
 
@@ -254,6 +255,10 @@ export default function AddSubastaForm({ toastRef, setLoading, navigation }) {
         setErrorPrecioBase(null)
     }
 
+    // const getCurrencySubasta= (data) =>{
+    //      setDataMoneda(data.code)
+    // }
+
     return (
         <ScrollView style={styles.viewContainer}>
             <ImageSubasta
@@ -268,6 +273,7 @@ export default function AddSubastaForm({ toastRef, setLoading, navigation }) {
                 errorPrecioBase={errorPrecioBase}
                 setIsVisibleMap={setIsVisibleMap}
                 locationSubasta={locationSubasta}
+                setDataMoneda={setDataMoneda}
             />
             {inputs.map((input, key)=>(
             <View style={styles.viewForm}>
@@ -507,7 +513,8 @@ function FormAdd({
     errorAddress, 
     errorPrecioBase,
     setIsVisibleMap,
-    locationSubasta
+    locationSubasta,
+    setDataMoneda
 }) {
 
     const onChange = (e, type) => {
@@ -542,7 +549,12 @@ function FormAdd({
                     showFlag={true}
                     showCurrencyName={false}
                     showCurrencyCode={true}
-                    onSelectCurrency={(data) => { console.log("DATA", data) }}
+                    onSelectCurrency={(data) => {
+                        //console.log("llega aca")
+                        console.log(typeof data)
+                        console.log(data["code"])
+                        setDataMoneda(data["code"])
+                    }}
                     onOpen={() => {console.log("Open")}}
                     onClose={() => {console.log("Close")}}
                     showNativeSymbol={true}
