@@ -35,11 +35,19 @@ export default function UserLogged() {
                 ) 
             }
             <Button
-                title="Ver datos personales"
-                buttonStyle={styles.btnCloseSession}
-                titleStyle={styles.btnCloseSessionTitle}
+                title="Datos personales"
+                buttonStyle={styles.btnInfo}
+                titleStyle={styles.btnInfoTitle}
                 onPress={() =>{
                     navigation.navigate("account-options")
+                }}
+            />
+            <Button
+                title="Medios de pago"
+                buttonStyle={styles.btnInfo}
+                titleStyle={styles.btnInfoTitle}
+                onPress={() =>{
+                    navigation.navigate("payment-options")
                 }}
             />
             <Button
@@ -63,8 +71,21 @@ const styles = StyleSheet.create({
         minHeight:"100%",
         backgroundColor:"#f9f9f9"
     },
-    btnCloseSession:{
+    btnInfo:{
         marginTop:30,
+        borderRadius:5,
+        backgroundColor:"#442484",
+        borderTopWidth:1,
+        borderTopColor:"#442484",
+        borderBottomWidth:1,
+        borderBottomColor:"#442484",
+        paddingVertical:10
+    },
+    btnInfoTitle:{
+        color:"#FFFFFF"
+    },
+    btnCloseSession:{
+        marginTop:200,
         borderRadius:5,
         backgroundColor:"#FFFFFF",
         borderTopWidth:1,

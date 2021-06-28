@@ -7,6 +7,8 @@ import Register from '../screens/account/Register'
 import RecoverPassword from '../screens/account/RecoverPassword'
 import GeneratePassword from '../screens/account/GeneratePassword'
 import AccountOptions from '../components/account/AccountOptions'
+import PaymentsOptions from '../screens/account/PaymentOptions'
+import AddPayment from '../screens/account/AddPayment'
 
 const Stack = createStackNavigator()
 
@@ -41,7 +43,17 @@ export default function AccountStack() {
             <Stack.Screen
                 name="account-options"
                 component={AccountOptions}
-                options={{ title: "Ver datos personales" }}
+                options={{ title: "Datos personales" }}
+            />
+            <Stack.Screen
+                name="payment-options"
+                component={PaymentsOptions}
+                options={{ title: "Medios de pago" }}
+            />
+            <Stack.Screen
+                name="add-payment"
+                component={AddPayment}
+                options={{ title: "Agregar Medio de Pago" }}
             />
         </Stack.Navigator>
     )

@@ -40,12 +40,12 @@ export const closeSession = () => {
 //     return result
 // }
 
-export const registerUser = async(email,password,nombre,apellido,dni,direccion,categoria) => {
+export const registerUser = async(email,password,nombre,apellido,dni,direccion,categoria,mediosPago) => {
     const result = { statusResponse: true, error: null}
     const user = firebase.auth().createUserWithEmailAndPassword(email, 
         password).then(cred => {
         return firebase.firestore().collection('users').doc(cred.user.uid).set({
-            email,password,nombre,apellido,dni,direccion,categoria
+            email,password,nombre,apellido,dni,direccion,categoria,mediosPago
           })
         })
     return result
@@ -442,6 +442,77 @@ export const updateDireccion = async(newData) => {
         const usersRef=db.collection("users")
         usersRef.doc(getCurrentUser().uid).update({direccion:newData}) 
      } catch (error) {
+        result.statusResponse = false
+        result.error = error
+    }
+    return result   
+}
+
+export const getPayments = async(limitPayments) => {
+    const result = { statusResponse: true, error: null, payments: [], startPayment: null }
+    try {
+        const response = await db
+            .collection("payments")
+            .orderBy("createAt", "desc")
+            .limit(limitPayments)
+            .get()
+        if (response.docs.length > 0) {
+            result.startPayment = response.docs[response.docs.length - 1]
+        }
+        response.forEach((doc) => {
+            const payment = doc.data()
+            payment.id = doc.id
+            result.payments.push(payment)
+        })
+    } catch (error) {
+        result.statusResponse = false
+        result.error = error
+    }
+    return result     
+}
+
+export const getMorePayments = async(limitPayments, startPayment) => {
+    const result = { statusResponse: true, error: null, payments: [], startPayment: null }
+    try {
+        const response = await db
+            .collection("payments")
+            .orderBy("createAt", "desc")
+            .startAfter(startPayment.data().createAt)
+            .limit(limitPayments)
+            .get()
+        if (response.docs.length > 0) {
+            result.startPayment = response.docs[response.docs.length - 1]
+        }
+        response.forEach((doc) => {
+            const payment = doc.data()
+            payment.id = doc.id
+            result.payments.push(payment)
+        })
+    } catch (error) {
+        result.statusResponse = false
+        result.error = error
+    }
+    return result     
+}
+
+export const addNewPuja = async(idSubasta,puja,uidUsuario,horario) => {
+    const result = { statusResponse: true, error: null }
+    try {
+        db.collection("subastas").doc(idSubasta).update({listadoPujas:firebase.firestore.FieldValue.arrayUnion(...[{nombrePujador:uidUsuario,valorPujado:puja,horarioPuja:horario}])})
+     } catch (error) {
+        console.log(result)
+        result.statusResponse = false
+        result.error = error
+    }
+    return result   
+}
+
+export const addNewPaymentMethod = async(idUser,number,expiry,cvc,name,postalCode,type) => {
+    const result = { statusResponse: true, error: null }
+    try {
+        db.collection("users").doc(idUser).update({medioPago:firebase.firestore.FieldValue.arrayUnion(...[{number:number,expiry:expiry,cvc:cvc,name:name,postalCode:postalCode,type:type}])})
+     } catch (error) {
+        console.log(result)
         result.statusResponse = false
         result.error = error
     }

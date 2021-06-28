@@ -18,12 +18,6 @@ export default function Navigation() {
             case "subastas":
                 iconName = "compass-outline"
                 break;
-            case "favorites":
-                iconName = "heart-outline"
-                break;
-            case "top-subastas":
-                iconName = "star-outline"
-                break;
             case "search":
                 iconName = "magnify"
                 break;
@@ -58,16 +52,6 @@ export default function Navigation() {
                     name="subastas"
                     component={SubastasStack}
                     options={{ title: "Subastas" }}
-                />
-                <Tab.Screen
-                    name="favorites"
-                    component={FavoritesStack}
-                    options={{ title: "Favoritos" }}
-                />
-                <Tab.Screen
-                    name="top-subastas"
-                    component={TopSubastasStack}
-                    options={{ title: "Top 10" }}
                 />
                 <Tab.Screen
                     name="search"

@@ -27,7 +27,6 @@ export default function AddSubastaForm({ toastRef, setLoading, navigation }) {
     const [locationSubasta, setLocationSubasta] = useState(null)
     const [isDatePickerVisible, setDatePickerVisibility] = useState(false)
     const [inputs, setInputs] = useState([{key: '',nombreItem: '',descripcion: '',cantidad: '',artista:'',fechaObra:'',historiaObra:''}])
-    const [pujas,setPujas]=useState(null)
     const [fechaSubasta,setFecha]=useState(null)
     const [horaSubasta,setHora]=useState(null)
     const [horaFin,setHoraFin]=useState(null)
@@ -107,7 +106,7 @@ export default function AddSubastaForm({ toastRef, setLoading, navigation }) {
             email: formData.email,
             images: responseUploadImages,
             catalogo:inputs,
-            listadoPujas:pujas,
+            listadoPujas:[{nombrePujador: 'app',valorPujado: formData.precioBase,horarioPuja:new Date().getDate()}],
             precioBase: formData.precioBase,
             moneda:'ARS',
             precioFinal: 0,

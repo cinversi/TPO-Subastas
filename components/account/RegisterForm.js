@@ -17,9 +17,16 @@ export default function RegisterForm() {
     const [errorDNI, setErrorDNI] = useState("")
     const [errorDireccion, setErrorDireccion] = useState("")
     const [loading, setLoading] = useState(false)
- 
     const navigation = useNavigation()
  
+    const mediosPago = {
+        number: '',
+        expiry: '',
+        cvc:'',
+        name:'',
+        postalCode:'',
+        type:''
+    }
     const onChange = (e,type) =>{
         setFormData({...formData, [type]:e.nativeEvent.text})
     }
@@ -30,7 +37,7 @@ export default function RegisterForm() {
         }
  
         setLoading(true)
-        const result = await registerUser(formData.email, "123456",formData.nombre,formData.apellido,formData.dni,formData.direccion,"comun")
+        const result = await registerUser(formData.email, "123456",formData.nombre,formData.apellido,formData.dni,formData.direccion,"comun",mediosPago)
         setLoading(false)
  
         if (!result.statusResponse){

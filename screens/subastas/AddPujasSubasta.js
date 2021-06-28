@@ -3,11 +3,11 @@ import { StyleSheet, Text, View,FlatList } from 'react-native'
 import { Button, Input } from 'react-native-elements'
 import { useFocusEffect } from '@react-navigation/native'
 import Toast from 'react-native-easy-toast'
-import { isEmpty } from 'lodash'
+import { isEmpty,size } from 'lodash'
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'
  
 import Loading from '../../components/Loading'
-import { addDocumentWithoutId, getCurrentUser, getDocumentById, updateDocument, addNewPuja } from '../../utils/actions'
+import { addDocumentWithoutId, getCurrentUser, getDocumentById, updateDocument, addNewPuja,} from '../../utils/actions'
  
 export default function AddReviewSubasta({ navigation, route }) {
     const { idSubasta } = route.params
@@ -16,11 +16,15 @@ export default function AddReviewSubasta({ navigation, route }) {
     const [rating, setRating] = useState(null)
     const [title, setTitle] = useState("")
     const [errorTitle, setErrorTitle] = useState(null)
-    const [puja, setPuja] = useState("")
+    const [valorUltimaPuja, setValorUltimaPuja] = useState(null)
+    const [nombreUltimoPujador, setNombreUltimoPujador] = useState(null)
+    const [diaHoraUltimoPuja, setDiaHoraUltimoPuja] = useState(null)
+    const [puja,setPuja] = useState(null)
     const [errorReview, setErrorReview] = useState(null)
     const [loading, setLoading] = useState(false)
     const [subasta, setSubasta] = useState(null)
-    const [listadoPujas, setListadoPujas] = useState([])
+    const [errorPuja,setErrorPuja] = useState(null)
+    const [listadoPujas, setListadoPujas] = useState([{key: '',nombrePujador: '',valorPujado: ''}])
  
     useFocusEffect(
         useCallback(() => {
@@ -31,85 +35,106 @@ export default function AddReviewSubasta({ navigation, route }) {
             getData()
         }, [])
     )
+ 
+    useFocusEffect(
+        useCallback(() => {
+            async function getUltimaPuja() {
+                setLoading(true)
+                const response = await getDocumentById("subastas", idSubasta)
+                if ((size(response.document.listadoPujas))>1){                                   
+                    const ultimoValorPujado=response.document.listadoPujas[(size(response.document.listadoPujas))-1].valorPujado
+                    const ultimoNombrePujador=response.document.listadoPujas[(size(response.document.listadoPujas))-1].nombrePujador
+                    const fecha1=new Date((response.document.listadoPujas[(size(response.document.listadoPujas))-1].horarioPuja.seconds)*1000)
+                    const diaPuja=fecha1.toLocaleDateString("es-AR")
+                    var time_to_show = response.document.listadoPujas[(size(response.document.listadoPujas))-1].horarioPuja.seconds; // unix timestamp in seconds
+                    var t = new Date(time_to_show * 1000);
+                    var horasMinutosSegundosPuja = ('0' + t.getHours()).slice(-2) + ':' + ('0' + t.getMinutes()).slice(-2)+':'+('0' + t.getSeconds()).slice(-2)
+                    var diaYHoraPuja=diaPuja+' '+horasMinutosSegundosPuja
+                    const restNombrePujador = await getDocumentById("users",ultimoNombrePujador)
+                    const datosPujador=restNombrePujador.document.nombre+' '+restNombrePujador.document.apellido
+                    setNombreUltimoPujador(datosPujador)
+                    setValorUltimaPuja(ultimoValorPujado)
+                    setDiaHoraUltimoPuja(diaYHoraPuja)
+                }
+                else {
+                    setNombreUltimoPujador("Anonimo")
+                    setValorUltimaPuja(response.document.precioBase)
+                    const fecha1=new Date((response.document.createAt.seconds)*1000)
+                    const diaPuja=fecha1.toLocaleDateString("es-AR")
+                    var time_to_show = response.document.createAt.seconds; // unix timestamp in seconds
+                    var t = new Date(time_to_show * 1000);
+                    var horasMinutosSegundosPuja = ('0' + t.getHours()).slice(-2) + ':' + ('0' + t.getMinutes()).slice(-2)+':'+('0' + t.getSeconds()).slice(-2)
+                    var diaYHoraPuja=diaPuja+' '+horasMinutosSegundosPuja
+                    setDiaHoraUltimoPuja("No hubo pujas hasta el momento")
+                }
+                setLoading(false)
+            }
+            getUltimaPuja()
+        }, [])
+    )
     
- 
-    const addReview = async() => {
-        if (!validForm()) {
-            return
-        }
- 
-        setLoading(true)
-        const user = getCurrentUser()
-        const data = {
-            idUser: user.uid,
-            avatarUser: user.photoURL,
-            idSubasta,
-            title,
-            review,
-            rating,
-            createAt: new Date()
-        }
- 
-        const responseAddReview = await addDocumentWithoutId("reviews", data)
-        if (!responseAddReview.statusResponse) {
-            setLoading(false)
-            toastRef.current.show("Error al enviar el comentario, por favor intenta más tarde.", 3000)
-            return
-        }
- 
-        const responseGetSubasta = await getDocumentById("subastas", idSubasta)
-        if (!responseGetSubasta.statusResponse) {
-            setLoading(false)
-            toastRef.current.show("Error al obtener la subasta, por favor intenta más tarde.", 3000)
-            return
-        }
- 
-        const subasta = responseGetSubasta.document
-        const ratingTotal = subasta.ratingTotal + rating
-        const quantityVoting = subasta.quantityVoting + 1
-        const ratingResult = ratingTotal / quantityVoting
-        const responseUpdateSubasta = await updateDocument("subastas", idSubasta, {
-            ratingTotal,
-            quantityVoting,
-            rating: ratingResult
-        })
-        setLoading(false)
- 
-        if (!responseUpdateSubasta.statusResponse) {
-            toastRef.current.show("Error al actualizar la subasta, por favor intenta más tarde.", 3000)
-            return
-        }
- 
-        navigation.goBack()
-    }
- 
-    const addPuja = async () => {
+    const addPuja = async() => {
         if (!validForm()) {
             return
         }
         setLoading(true)
-        const responseAddPuja = await addNewPuja(idSubasta,puja,getCurrentUser().uid )
+        const horarioPuja=new Date()
+        const responseAddPuja = await addNewPuja(idSubasta,puja,getCurrentUser().uid,horarioPuja )
         if (!responseAddPuja.statusResponse) {
             setLoading(false)
-            console.log(idSubasta,puja,getCurrentUser().uid)
             toastRef.current.show("Error al realizar puja", 3000)
             return
         }
- 
- 
+        navigation.navigate("subastas") 
     } 
  
+    
+ 
     const validForm = () => {
-        setErrorTitle(null)
-        setErrorReview(null)
+        clearErrors()
         let isValid = true
  
-        if (puja<subasta.precioBase){
-            setErrorReview("El valor a pujar es menor que el precio actual")
-            isValida=false
+        // if(subasta.categoria=="COMUN" || subasta.categoria == "ESPECIAL" || subasta.categoria== "PLATA"){
+        //     if(parseInt(puja)<parseInt(subasta.precioBase*1.01)){
+        //         setErrorPuja("Debes ingresar un monto mayor al 1% del precio base")
+        //         isValid=false
+        // }
+        // } 
+ 
+        const pujaInt=parseInt(puja)
+        const valorLimit=(parseInt(valorUltimaPuja))*1.20
+        const valorUltimaPujaInt=parseInt(valorUltimaPuja)
+ 
+        if(pujaInt<=valorUltimaPujaInt){
+            setErrorPuja("El monto ingresado debe ser mayor a la ultima puja.")
+            isValid = false
+        }
+ 
+        if(pujaInt>valorLimit){
+            setErrorPuja("El monto ingresado no debe exceder al 20% del valor de la misma.")
+            isValid = false 
+        }
+        // if(valorLimit<50)
+        // {
+        //     setErrorPuja("Debes ingresar un monto menor al 25% de la última puja")
+        //     isValid = false 
+        // }
+ 
+        if(isNaN(puja)){
+            setErrorPuja("Debes ingresar un valor numerico para pujar.")
+            isValid = false  
+        }
+        
+        if (isEmpty(puja)) {
+            setErrorPuja("Debes ingresar un valor para pujar.")
+            isValid = false
         }
  
         return isValid
+    }
+ 
+    const clearErrors = () => {
+        setErrorPuja(null)
     }
  
     if (subasta === null) {
@@ -124,31 +149,22 @@ export default function AddReviewSubasta({ navigation, route }) {
                 <Text style={styles.viewPrecioBaseText}>Precio base</Text> 
                 <Text style={styles.viewPrecioBase}>${subasta.precioBase}</Text>
                 <Text style={styles.viewPrecioActualText}>Precio actual</Text>
-                <Text style={styles.viewPrecioActual}>${subasta.precioBase}</Text>
-                <Text style={styles.viewUltimasPujas}>Ultimas pujas:</Text>
-            </View>
-            <FlatList
-                        data={subasta.pujas}
-                        keyExtractor={(item, index) => index.toString()}
-                        renderItem={(puja) => 
-                            <Pujas
-                                puja={puja}
-                                navigation={navigation}
-                            />
-                        }
-                    />
+                <Text style={styles.viewPrecioActual}>${valorUltimaPuja}</Text>
+                <Text style={styles.viewUltimasPujas}>Día y horario de última puja: {diaHoraUltimoPuja}</Text>
+                <Text style={styles.viewUltimasPujas}>Ultimo pujador: {nombreUltimoPujador}</Text>  
+            </View>        
             <View style={styles.formReview}>
                 <Input
                     placeholder="$ Ingresar valor a pujar"
                     containerStyle={styles.input}
                     onChange={(e) => setPuja(e.nativeEvent.text)}
-                    errorMessage={errorReview}
+                    errorMessage={errorPuja}
                 />
                 <Button
                     title="Pujar"
-                    containerStyle={styles.btnContainer}
+                    onPress={addPuja}
                     buttonStyle={styles.btn}
-                    //onPress={addPuja}
+                    containerStyle={styles.btnContainer}
                 />
             </View>
             <Toast ref={toastRef} position="center" opacity={0.9}/>
@@ -157,9 +173,6 @@ export default function AddReviewSubasta({ navigation, route }) {
     )
 }
  
-function Pujas ({ puja, navigation }) {
-    const { hora, nombre, valor } = puja.item
-}
  
 const styles = StyleSheet.create({
     viewBody: {
@@ -210,7 +223,8 @@ const styles = StyleSheet.create({
         marginTop: 20
     },
     input: {
-        marginBottom: 10
+        marginBottom: 10,
+        marginTop:50
     },
     textArea: {
         height: 150,
