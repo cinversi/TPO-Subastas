@@ -29,17 +29,6 @@ export const closeSession = () => {
     return firebase.auth().signOut()
 }
 
-// export const registerUser = async(email, password,dni,direccion,categoria) => {
-//     const result = { statusResponse: true, error: null}
-//     try {
-//         await firebase.auth().createUserWithEmailAndPassword(email)
-//     } catch (error) {
-//         result.statusResponse = false
-//         result.error = "Este correo ya ha sido registrado."
-//     }
-//     return result
-// }
-
 export const registerUser = async(email,password,nombre,apellido,dni,direccion,categoria,mediosPago) => {
     const result = { statusResponse: true, error: null}
     const user = firebase.auth().createUserWithEmailAndPassword(email, 

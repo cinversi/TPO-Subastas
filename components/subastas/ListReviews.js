@@ -48,9 +48,9 @@ export default function ListReviews({ navigation, idSubasta }) {
                         style={styles.mustLoginText}
                         onPress={() => navigation.navigate("login")}
                     >
-                        Para escribir una opinión es necesario estar logueado.{" "}
+                        Para visualizar el precio del producto o participar en la subasta es necesario estar logueado.{"\n"}
                         <Text style={styles.loginText}>
-                            Pusla AQUÍ para iniciar sesión.
+                            Pulsa AQUÍ para iniciar sesión.
                         </Text>
                     </Text>
                 )

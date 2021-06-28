@@ -1,7 +1,7 @@
 import React, { useState, useCallback, useRef, useEffect } from 'react'
 import { View } from 'react-native'
 import { Alert, Dimensions, StyleSheet, Text, ScrollView } from 'react-native'
-import { ListItem, Rating, Icon, Input, Button } from 'react-native-elements'
+import { ListItem, Icon, Input, Button } from 'react-native-elements'
 import { isEmpty, map } from 'lodash'
 import { useFocusEffect } from '@react-navigation/native'
 import firebase from 'firebase/app'
@@ -21,7 +21,6 @@ import {
     setNotificationMessage, 
     getUsersFavorite
 } from '../../utils/actions'
-import { callNumber, formatPhone, sendEmail, sendWhatsApp } from '../../utils/helpers'
 import Modal from '../../components/Modal'
 
 const widthScreen = Dimensions.get("window").width
@@ -114,16 +113,6 @@ export default function Subasta({ navigation, route }) {
                 activeSlide={activeSlide}
                 setActiveSlide={setActiveSlide}
             />
-            <View style={styles.viewFavorite}>
-                <Icon
-                    type="material-community"
-                    name={ isFavorite ? "heart" : "heart-outline" }
-                    onPress={ isFavorite ? removeFavorite : addFavorite }
-                    color="#442484"
-                    size={35}
-                    underlayColor="tranparent"
-                />
-            </View>
             <TitleSubasta
                 name={subasta.name}
                 description={subasta.description}
@@ -133,11 +122,7 @@ export default function Subasta({ navigation, route }) {
                 name={subasta.name}
                 location={subasta.location}
                 address={subasta.address}
-                email={subasta.email}
-                phone={formatPhone(subasta.callingCode, subasta.phone)}
                 currentUser={currentUser}
-                callingCode={subasta.callingCode}
-                phoneNoFormat={subasta.phone}
                 setLoading={setLoading}
                 setModalNotification={setModalNotification}
             />
@@ -251,44 +236,13 @@ function SendMessage ({ modalNotification, setModalNotification, setLoading, sub
 function SubastaInfo({ 
     name, 
     location, 
-    address, 
-    email, 
-    phone, 
-    currentUser, 
-    callingCode, 
-    phoneNoFormat, 
-    setLoading,
+    address,
+    currentUser,
     setModalNotification 
 }) {
     const listInfo = [
-        { type: "addres", text: address, iconLeft: "map-marker", iconRight: "message-text-outline" },
-        { type: "phone", text: phone, iconLeft: "phone", iconRight: "whatsapp" },
-        { type: "email", text: email, iconLeft: "at" },
+        { type: "addres", text: address, iconLeft: "map-marker"}
     ]
-
-    const actionLeft = (type) => {
-        if (type == "phone") {
-            callNumber(phone)
-        } else if (type == "email") {
-            if (currentUser) {
-                sendEmail(email, "Interesado", `Soy ${currentUser.displayName}, estoy interesado en su subasta`)
-            } else {
-                sendEmail(email, "Interesado", `Estoy interesado en su subasta`)
-            }
-        }
-    }
-
-    const actionRight = (type) => {
-        if (type == "phone") {
-            if (currentUser) {
-                sendWhatsApp(`${callingCode} ${phoneNoFormat}`, `Soy ${currentUser.displayName}, estoy interesado en su subasta`)
-            } else {
-                sendWhatsApp(`${callingCode} ${phoneNoFormat}`, `Estoy interesado en su subasta`)
-            }
-        } else if (type == "addres") {
-            setModalNotification(true)
-        }
-    }
 
     return (
         <View style={styles.viewSubastaInfo}>
@@ -315,16 +269,6 @@ function SubastaInfo({
                         <ListItem.Content>
                             <ListItem.Title>{item.text}</ListItem.Title>
                         </ListItem.Content>
-                        {
-                            item.iconRight && (
-                                <Icon
-                                    type="material-community"
-                                    name={item.iconRight}
-                                    color="#442484"
-                                    onPress={() => actionRight(item.type)}
-                                />
-                            )
-                        }
                     </ListItem>
                 ))
             }

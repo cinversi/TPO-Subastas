@@ -15,9 +15,9 @@ export default function UserGuest() {
                 resizeMove="contain"
                 style={styles.image}
             />
-            <Text style={styles.title}>Consulta tu perfil en Subastas</Text>
-            <Text style={styles.description}>¿Como describirias tu mejor subasta? Busca y visualiza las mejores subastas de una forma
-                sencilla, vota cual te ha gustado mas y comenta como ha sido tu experiencia.
+            <Text style={styles.title}>Consulta tu perfil en SubastAR</Text>
+            <Text style={styles.description}>Compra bienes al mejor precio! Busca y visualiza las mejores subastas de una forma
+                sencilla, participa en la que te haya gustado mas y llevate todo!
             </Text>
             <Button
                 buttonStyle={styles.button}

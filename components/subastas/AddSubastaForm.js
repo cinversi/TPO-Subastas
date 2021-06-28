@@ -2,13 +2,12 @@ import React, { useState, useEffect } from 'react'
 import { Alert, Dimensions, StyleSheet, Text, TouchableOpacity, View, ScrollView } from 'react-native'
 import { Avatar, Button, Icon, Input, Image } from 'react-native-elements'
 import { map, size, filter, isEmpty } from 'lodash' 
-import CountryPicker from 'react-native-country-picker-modal'
 import MapView from 'react-native-maps'
 import uuid from 'random-uuid-v4'
 import { DateTimePickerModal } from 'react-native-modal-datetime-picker'
 import CurrencyPicker from "react-native-currency-picker"
 
-import { formatPhone, getCurrentLocation, loadImageFromGallery, validateEmail } from '../../utils/helpers'
+import { getCurrentLocation, loadImageFromGallery } from '../../utils/helpers'
 import { addDocumentWithoutId, getCurrentUser, uploadImage } from '../../utils/actions'
 import Modal from '../../components/Modal'
 
@@ -18,9 +17,7 @@ export default function AddSubastaForm({ toastRef, setLoading, navigation }) {
     const [formData, setFormData] = useState(defaultFormValues())
     const [errorName, setErrorName] = useState(null)
     const [errorDescription, setErrorDescription] = useState(null)
-    const [errorEmail, setErrorEmail] = useState(null)
     const [errorAddress, setErrorAddress] = useState(null)
-    const [errorPhone, setErrorPhone] = useState(null)
     const [errorPrecioBase, setErrorPrecioBase] = useState(null)
     const [imagesSelected, setImagesSelected] = useState([])
     const [isVisibleMap, setIsVisibleMap] = useState(false)
@@ -100,19 +97,13 @@ export default function AddSubastaForm({ toastRef, setLoading, navigation }) {
             name: formData.name,
             address: formData.address,
             description: formData.description,
-            callingCode: formData.callingCode,
-            phone: formData.phone,
             location: locationSubasta,
-            email: formData.email,
             images: responseUploadImages,
             catalogo:inputs,
             listadoPujas:[{nombrePujador: 'app',valorPujado: formData.precioBase,horarioPuja:new Date().getDate()}],
             precioBase: formData.precioBase,
             moneda:'ARS',
             precioFinal: 0,
-            rating: 0,
-            ratingTotal: 0,
-            quantityVoting: 0,
             createAt: new Date(),
             rematador: getCurrentUser().uid,
             fechaSubastar:fechaSubasta,
@@ -159,16 +150,6 @@ export default function AddSubastaForm({ toastRef, setLoading, navigation }) {
             isValid = false
         }
 
-        if (!validateEmail(formData.email)) {
-            setErrorEmail("Debes ingresar un email de la subasta válido.")
-            isValid = false
-        }
-
-        if (size(formData.phone) < 10) {
-            setErrorPhone("Debes ingresar un teléfono de la subasta válido.")
-            isValid = false
-        }
-
         if (isEmpty(formData.description)) {
             setErrorDescription("Debes ingresar una descripción de la subasta.")
             isValid = false
@@ -180,7 +161,7 @@ export default function AddSubastaForm({ toastRef, setLoading, navigation }) {
         }
 
         if(isNaN(formData.precioBase)) {
-            setErrorDNI("Debes ingresar un precio base válido.")
+            setErrorPrecioBase("Debes ingresar un precio base válido.")
             isValid = false
         }
 
@@ -269,9 +250,7 @@ export default function AddSubastaForm({ toastRef, setLoading, navigation }) {
     const clearErrors = () => {
         setErrorAddress(null)
         setErrorDescription(null)
-        setErrorEmail(null)
         setErrorName(null)
-        setErrorPhone(null)
         setErrorPrecioBase(null)
     }
 
@@ -285,9 +264,7 @@ export default function AddSubastaForm({ toastRef, setLoading, navigation }) {
                 setFormData={setFormData}
                 errorName={errorName}
                 errorDescription={errorDescription}
-                errorEmail={errorEmail}
                 errorAddress={errorAddress}
-                errorPhone={errorPhone}
                 errorPrecioBase={errorPrecioBase}
                 setIsVisibleMap={setIsVisibleMap}
                 locationSubasta={locationSubasta}
@@ -527,16 +504,11 @@ function FormAdd({
     setFormData, 
     errorName, 
     errorDescription, 
-    errorEmail, 
     errorAddress, 
     errorPrecioBase,
-    errorPhone, 
     setIsVisibleMap,
     locationSubasta
 }) {
-    const [country, setCountry] = useState("AR")
-    const [callingCode, setCallingCode] = useState("54")
-    const [phone, setPhone] = useState("")
 
     const onChange = (e, type) => {
         setFormData({ ...formData, [type] : e.nativeEvent.text })
@@ -562,39 +534,7 @@ function FormAdd({
                     onPress: () => setIsVisibleMap(true)
                 }}
             />
-            <Input
-                keyboardType="email-address"
-                placeholder="Email de la subasta"
-                defaultValue={formData.email}
-                onChange={(e) => onChange(e, "email")}
-                errorMessage={errorEmail}
-            />
-            <View style={styles.phoneView}>
-                <CountryPicker
-                    withFlag
-                    withCallingCode
-                    withFilter
-                    withCallingCodeButton
-                    containerStyle={styles.countryPicker}
-                    countryCode={country}
-                    onSelect={(country) => {
-                        setFormData({ 
-                            ...formData, 
-                            "country": country.cca2, 
-                            "callingCode": country.callingCode[0]
-                        })
-                    }}
-                />
-                <Input
-                    placeholder="WhatsApp de la subasta"
-                    keyboardType="phone-pad"
-                    containerStyle={styles.inputPhone}
-                    defaultValue={formData.phone}
-                    onChange={(e) => onChange(e, "phone")}
-                    errorMessage={errorPhone}
-                />
-            </View>
-            <View style={styles.phoneView}>
+            <View style={styles.currencyView}>
                 <CurrencyPicker
                     enable={true}
                     darkMode={false}
@@ -635,7 +575,7 @@ function FormAdd({
                     />               
                 <Input
                     placeholder="Precio base"
-                    containerStyle={styles.inputPhone}
+                    containerStyle={styles.inputPrecioBase}
                     defaultValue={formData.precioBase}
                     onChange={(e) => onChange(e, "precioBase")}
                     errorMessage={errorPrecioBase}
@@ -657,11 +597,7 @@ const defaultFormValues = () => {
     return {
         name: "",
         description: "",
-        email: "",
-        phone: "",
         address: "",
-        country: "AR",
-        callingCode: "54",
         precioBase:""
     }
 }
@@ -677,11 +613,11 @@ const styles = StyleSheet.create({
         height: 70,
         width: "100%"
     },
-    phoneView: {
+    currencyView: {
         width: "80%",
         flexDirection: "row"
     },
-    inputPhone: {
+    inputPrecioBase: {
         width: "80%"
     },
     btnAddSubasta: {

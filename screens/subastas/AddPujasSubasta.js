@@ -13,7 +13,6 @@ export default function AddReviewSubasta({ navigation, route }) {
     const { idSubasta } = route.params
     const toastRef = useRef()
  
-    const [rating, setRating] = useState(null)
     const [title, setTitle] = useState("")
     const [errorTitle, setErrorTitle] = useState(null)
     const [valorUltimaPuja, setValorUltimaPuja] = useState(null)

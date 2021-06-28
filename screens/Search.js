@@ -50,7 +50,7 @@ export default function Search({ navigation }) {
                         </Text>
                     ) : (
                         <Text style={styles.noFound}>
-                            No hay subastas que coincidan con el critertio de búsqueda.
+                            No hay subastas que coincidan con el criterio de búsqueda.
                         </Text>
                     )
                 )

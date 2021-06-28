@@ -61,11 +61,11 @@ export default function InfoUser({ user, setLoading, setLoadingText }) {
             <View style={styles.infoUser}>
                 <Text style={styles.displayName}>
                     {
-                        usuario.nombre
+                        usuario.nombre + ' ' + usuario.apellido
                     }
                 </Text>
                 <Text>{usuario.email}</Text>
-                <Text>{usuario.categoria}</Text>
+                <Text>Categoria: {usuario.categoria}</Text>
             </View>
         </View>
     )
