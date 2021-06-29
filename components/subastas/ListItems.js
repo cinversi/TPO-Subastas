@@ -1,8 +1,12 @@
-import React from 'react'
-import { ActivityIndicator, FlatList, StyleSheet, Text, View, TouchableOpacity } from 'react-native'
-import { Image } from 'react-native-elements'
+import React, { useState, useCallback } from 'react'
+import { FlatList, StyleSheet, Text, View, TouchableOpacity } from 'react-native'
+import { Button } from 'react-native-elements'
+import { useFocusEffect } from '@react-navigation/native'
+import firebase from 'firebase/app'
+
 
 export default function ListItems({ catItems, navigation, handleLoadMore }) {
+
     return (
         <View>
             <FlatList
@@ -11,27 +15,51 @@ export default function ListItems({ catItems, navigation, handleLoadMore }) {
                 onEndReachedThreshold={0.5}
                 onEndReached={handleLoadMore}
                 renderItem={(catItem) => (
-                    <Subasta catItem={catItem} navigation={navigation}/>
+                    <CatItem catItem={catItem} navigation={navigation}/>
                 )}
             />
         </View>
     )
 }
 
-function catItem({ catItem, navigation }) {
+function CatItem({ catItem, navigation }) {
+    const [userLogged, setUserLogged] = useState(false)
     const { uuid, nombreItem, descripcion, cantidad } = catItem.item
 
     const goCatItem = () => {
-        navigation.navigate("catItem", { id, nombreItem })
+        navigation.navigate("catItem", { uuid, nombreItem })
     } 
+
+    firebase.auth().onAuthStateChanged((user) => {
+        user ? setUserLogged(true) : setUserLogged(false)
+    })
 
     return (
         <TouchableOpacity onPress={goCatItem}>
             <View style={styles.viewCatitem}>
                 <View>
-                    <Text style={styles.catitemTitle}>{nombreItem}</Text>
-                    <Text style={styles.catitemInformation}>{descripcion}</Text>
-                    <Text style={styles.catitemInformation}>{cantidad}</Text>
+                    <Text style={styles.catitemTitle}>Producto: {nombreItem}</Text>
+                    <Text style={styles.catitemInformation}>Descripción: {descripcion}</Text>
+                    <Text style={styles.catitemInformation}>Cantidad: {cantidad}</Text>
+                    {
+                        userLogged ? (
+                            <Button
+                                buttonStyle={styles.btnAddPayment}
+                                title="Ver precio"
+                                //onPress={() => navigation.navigate("add-pujas-subasta", { idSubasta })}
+                            />
+                        ) : (
+                            <Text 
+                                style={styles.mustLoginText}
+                                onPress={() => navigation.navigate("login")}
+                            >
+                                Para visualizar el precio del producto o participar en la subasta es necesario iniciar sesión.{"\n"}
+                                <Text style={styles.loginText}>
+                                    Pulsa AQUÍ para hacerlo!
+                                </Text>
+                            </Text>
+                        )
+                    }
                 </View>
             </View>
         </TouchableOpacity>
@@ -56,5 +84,17 @@ const styles = StyleSheet.create({
     catitemInformation: {
         paddingTop: 2,
         color: "grey"
+    },
+    btnAddPayment: {
+        backgroundColor: "#442484",
+        padding: 5
+    },
+    mustLoginText: {
+        textAlign: "center",
+        color: "#a376c7",
+        padding: 20,
+    },
+    loginText: {
+        fontWeight: "bold"
     }
 })

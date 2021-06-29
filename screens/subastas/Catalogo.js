@@ -39,7 +39,7 @@ export default function Catalogo({ navigation }) {
         }, [])
     )
 
-    const handleLoadMore = async() => {
+    /*const handleLoadMore = async() => {
         if (!startItem) {
             return
         }
@@ -51,7 +51,7 @@ export default function Catalogo({ navigation }) {
             setItems([...items, ...response.items])
         }
         setLoading(false)
-    }
+    }*/
 
     if (user === null) {
         return <Loading isVisible={true} text="Cargando..."/>
@@ -64,7 +64,7 @@ export default function Catalogo({ navigation }) {
                     <ListCatalogos
                         items={items}
                         navigation={navigation}
-                        handleLoadMore={handleLoadMore}
+                        //handleLoadMore={handleLoadMore}
                     />
                 ) : (
                     <View style={styles.notFoundView}>

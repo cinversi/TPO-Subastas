@@ -28,7 +28,6 @@ export default function Subasta({ navigation, route }) {
     const [loading, setLoading] = useState(false)
     const [catItems, setCatItems] = useState([])
 
-
     firebase.auth().onAuthStateChanged(user => {
         user ? setUserLogged(true) : setUserLogged(false)
         setCurrentUser(user)
@@ -43,6 +42,7 @@ export default function Subasta({ navigation, route }) {
                 if (response.statusResponse) {
                     console.log(response.document.catalogo)
                     setSubasta(response.document)
+                    setCatItems(response.document.catalogo)
                 } else {
                     setSubasta({})
                     Alert.alert("Ocurrió un problema cargando la subasta, intente más tarde.")
@@ -50,18 +50,6 @@ export default function Subasta({ navigation, route }) {
             })()
         }, [])
     )
-
-    // useFocusEffect(
-    //     useCallback(() => {
-    //         async function getData() {
-    //             setLoading(true)
-    //             const currentSubasta = await getDocumentById("subastas", id)
-    //             setCatItems(currentSubasta.document.catalogo)
-    //             setLoading(false)
-    //         }
-    //         getData()
-    //     }, [])
-    // )
 
     if (!subasta) {
         return <Loading isVisible={true} text="Cargando..."/>
@@ -81,6 +69,10 @@ export default function Subasta({ navigation, route }) {
                 description={subasta.description}
                 categoria={subasta.categoria}
             />
+            <ListItem
+                style={styles.containerListItem}
+            ></ListItem>
+            <Text style={styles.catalogoTitle}>Catálogo</Text>
             {
                 size(catItems) > 0 ? (
                     <ListItems
@@ -100,10 +92,6 @@ export default function Subasta({ navigation, route }) {
                 address={subasta.address}
                 currentUser={currentUser}
                 setLoading={setLoading}
-            />
-            <ListReviews
-                navigation={navigation}
-                idSubasta={subasta.id}
             />
             <Toast ref={toastRef} position="center" opacity={0.9}/>
             <Loading isVisible={loading} text="Por favor espere..."/>
@@ -171,7 +159,13 @@ const styles = StyleSheet.create({
         backgroundColor: "#fff"
     },
     viewSubastaTitle: {
-        padding: 15,
+        padding: 15
+    },
+    catalogoTitle: {
+        fontSize: 20,
+        fontWeight: "bold",
+        padding: 10,
+        color:"#442848"
     },
     viewSubastaContainer: {
         flexDirection: "row"
