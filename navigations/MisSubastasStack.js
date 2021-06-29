@@ -1,12 +1,35 @@
 import React from 'react'
-import { StyleSheet, Text, View } from 'react-native'
+import { createStackNavigator } from '@react-navigation/stack'
+
+import misSubastas from '../screens/misSubastas/misSubastas'
+import AddSubasta from '../screens/subastas/AddSubasta'
+import miSubasta from '../screens/misSubastas/miSubasta'
+import AddPujasSubasta from '../screens/subastas/AddPujasSubasta'
+
+const Stack = createStackNavigator()
 
 export default function MisSubastasStack() {
     return (
-        <View>
-            <Text>aca es subastas mis</Text>
-        </View>
+        <Stack.Navigator>
+            <Stack.Screen
+                name="mis-subastas"
+                component={misSubastas}
+                options={{ title: "Mis Subastas" }}
+            />
+            <Stack.Screen
+                name="add-subasta"
+                component={AddSubasta}
+                options={{ title: "Crear Subasta" }}
+            />
+            <Stack.Screen
+                name="miSubasta"
+                component={miSubasta}
+            />
+            <Stack.Screen
+                name="add-pujas-subasta"
+                component={AddPujasSubasta}
+                options={{ title: "Subasta" }}
+            />
+        </Stack.Navigator>
     )
 }
-
-const styles = StyleSheet.create({})

@@ -51,6 +51,14 @@ export default function UserLogged() {
                 }}
             />
             <Button
+                title="Información de Actividad"
+                buttonStyle={styles.btnInfo}
+                titleStyle={styles.btnInfoTitle}
+                onPress={() =>{
+                    navigation.navigate("user-activity-info")
+                }}
+            />
+            <Button
                 title="Cerrar Sesión"
                 buttonStyle={styles.btnCloseSession}
                 titleStyle={styles.btnCloseSessionTitle}
@@ -85,7 +93,7 @@ const styles = StyleSheet.create({
         color:"#FFFFFF"
     },
     btnCloseSession:{
-        marginTop:200,
+        marginTop:100,
         borderRadius:5,
         backgroundColor:"#FFFFFF",
         borderTopWidth:1,

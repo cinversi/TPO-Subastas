@@ -1,9 +1,10 @@
 import React, { useState } from 'react'
-import { Alert, StyleSheet, View } from 'react-native'
+import { Alert, StyleSheet, Text, View } from 'react-native'
 import { Button, Icon, Input } from 'react-native-elements'
 import { isEmpty, size } from 'lodash'
 import { useNavigation } from '@react-navigation/native'
- 
+import { Checkbox } from 'react-native-paper'
+
 import { validateEmail } from '../../utils/helpers'
 import { registerUser } from '../../utils/actions'
 import Loading from '../Loading'
@@ -16,9 +17,11 @@ export default function RegisterForm() {
     const [errorApellido, setErrorApellido] = useState("")
     const [errorDNI, setErrorDNI] = useState("")
     const [errorDireccion, setErrorDireccion] = useState("")
+    const [errorCheckbox, setErrorCheckbox] = useState("")
     const [loading, setLoading] = useState(false)
     const navigation = useNavigation()
     const mediosPago = []
+    const [checked, setChecked] = useState(false)
     
     const onChange = (e,type) =>{
         setFormData({...formData, [type]:e.nativeEvent.text})
@@ -46,6 +49,7 @@ export default function RegisterForm() {
         setErrorNombre("")
         setErrorApellido("")
         setErrorDNI("")
+        setErrorDireccion("")
         setErrorDireccion("")
         let isValid = true
         
@@ -88,6 +92,12 @@ export default function RegisterForm() {
             setErrorDireccion("Debes ingresar una dirección válida.")
             isValid = false
         }
+
+        if(checked==false) {
+            setErrorCheckbox("Debes aceptar todos los términos y condiciones.")
+            isValid = false
+        }
+
         return isValid
     }
  
@@ -129,6 +139,14 @@ export default function RegisterForm() {
                 errorMessage={errorEmail}
                 defaultValue={formData.email}
              />
+             <View>
+                <Checkbox.Item label="Acepto todos los terminos y condiciones"
+                status={checked ? 'checked' : 'unchecked'}
+                onPress={() => {
+                    setChecked(!checked);
+                }}/>                
+                <Input errorMessage={errorCheckbox} />
+             </View>
              <Button
                 title="Registrar nuevo usuario"
                 containerStyle={styles.btnContainer}

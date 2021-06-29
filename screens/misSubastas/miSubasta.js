@@ -17,7 +17,7 @@ import { getDocumentById, getIsFavorite } from '../../utils/actions'
 
 const widthScreen = Dimensions.get("window").width
 
-export default function Subasta({ navigation, route }) {
+export default function miSubasta({ navigation, route }) {
     const { id, name } = route.params
     const toastRef = useRef()
     

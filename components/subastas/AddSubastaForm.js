@@ -6,6 +6,7 @@ import MapView from "react-native-maps";
 import uuid from "random-uuid-v4";
 import { DateTimePickerModal } from "react-native-modal-datetime-picker";
 import CurrencyPicker from "react-native-currency-picker";
+import { Checkbox } from 'react-native-paper'
 
 import { getCurrentLocation, loadImageFromGallery } from "../../utils/helpers";
 import { addDocumentWithoutId, getCurrentUser, uploadImage} from "../../utils/actions";
@@ -17,11 +18,12 @@ export default function AddSubastaForm({ toastRef, setLoading, navigation }) {
   const [formData, setFormData] = useState(defaultFormValues());
   const [errorName, setErrorName] = useState(null);
   const [errorDescription, setErrorDescription] = useState(null);
-  const [errorAddress, setErrorAddress] = useState(null);
-  const [errorPrecioBase, setErrorPrecioBase] = useState(null);
+  //const [errorAddress, setErrorAddress] = useState(null);
+  //const [errorPrecioBase, setErrorPrecioBase] = useState(null);
+  const [errorCheckbox, setErrorCheckbox] = useState("");
   const [imagesSelected, setImagesSelected] = useState([]);
   const [isVisibleMap, setIsVisibleMap] = useState(false);
-  const [locationSubasta, setLocationSubasta] = useState(null);
+  //const [locationSubasta, setLocationSubasta] = useState(null);
   const [isDatePickerVisible, setDatePickerVisibility] = useState(false);
   const [inputs, setInputs] = useState([
     {
@@ -35,11 +37,12 @@ export default function AddSubastaForm({ toastRef, setLoading, navigation }) {
       itemUuid: ""
     },
   ]);
-  const [fechaSubasta, setFecha] = useState(null);
-  const [horaSubasta, setHora] = useState(null);
-  const [horaFin, setHoraFin] = useState(null);
+  //const [fechaSubasta, setFecha] = useState(null);
+  //const [horaSubasta, setHora] = useState(null);
+  //const [horaFin, setHoraFin] = useState(null);
   const [isHourPickerVisible, setHourPickerVisibility] = useState(false);
   const [dataMoneda, setDataMoneda] = useState("");
+  const [checked, setChecked] = useState(false)
 
   const addHandler = () => {
     const _inputs = [...inputs];
@@ -120,29 +123,30 @@ export default function AddSubastaForm({ toastRef, setLoading, navigation }) {
     const responseUploadImages = await uploadImages();
     const subasta = {
       name: formData.name,
-      address: formData.address,
+      //address: formData.address,
       description: formData.description,
-      location: locationSubasta,
+      //location: locationSubasta,
       images: responseUploadImages,
       catalogo: inputs,
-      listadoPujas: [
-        {
-          nombrePujador: "app",
-          valorPujado: formData.precioBase,
-          horarioPuja: new Date().getDate(),
-        },
-      ],
-      precioBase: formData.precioBase,
-      moneda: dataMoneda,
-      precioFinal: 0,
+      // listadoPujas: [
+      //   {
+      //     nombrePujador: "app",
+      //     valorPujado: "",//formData.precioBase,
+      //     horarioPuja: new Date().getDate(),
+      //   },
+      // ],
+      //precioBase: formData.precioBase,
+      //precioFinal: 0,
+      moneda: dataMoneda ? dataMoneda : 'ARS',
       createAt: new Date(),
       rematador: getCurrentUser().uid,
-      fechaSubastar: fechaSubasta,
-      horaSubastar: horaSubasta,
-      horaFinSubasta: horaFin,
-      categoria: calcularCategoria(formData.precioBase),
+      //fechaSubastar: fechaSubasta,
+      //horaSubastar: horaSubasta,
+      //horaFinSubasta: horaFin,
+      categoria: "",//calcularCategoria(formData.precioBase),
+      statusSubasta:'pending'
     };
-    console.log("esta es la moneda:", dataMoneda);
+
     const responseAddDocument = await addDocumentWithoutId("subastas", subasta);
     setLoading(false);
 
@@ -154,7 +158,7 @@ export default function AddSubastaForm({ toastRef, setLoading, navigation }) {
       return;
     }
 
-    navigation.navigate("subastas");
+    navigation.navigate("mis-subastas");
   };
 
   const uploadImages = async () => {
@@ -179,86 +183,91 @@ export default function AddSubastaForm({ toastRef, setLoading, navigation }) {
       isValid = false;
     }
 
-    if (isEmpty(formData.address)) {
-      setErrorAddress("Debes ingresar la dirección de la subasta.");
-      isValid = false;
-    }
+    // if (isEmpty(formData.address)) {
+    //   setErrorAddress("Debes ingresar la dirección de la subasta.");
+    //   isValid = false;
+    // }
 
     if (isEmpty(formData.description)) {
       setErrorDescription("Debes ingresar una descripción de la subasta.");
       isValid = false;
     }
 
-    if (isEmpty(formData.precioBase)) {
-      setErrorPrecioBase("Debes ingresar un precio base de la subasta.");
-      isValid = false;
+    // if (isEmpty(formData.precioBase)) {
+    //   setErrorPrecioBase("Debes ingresar un precio base de la subasta.");
+    //   isValid = false;
+    // }
+
+    // if (isNaN(formData.precioBase)) {
+    //   setErrorPrecioBase("Debes ingresar un precio base válido.");
+    //   isValid = false;
+    // }
+
+    if(checked==false) {
+      setErrorCheckbox("Debes aceptar las condiciones.")
+      isValid = false
     }
 
-    if (isNaN(formData.precioBase)) {
-      setErrorPrecioBase("Debes ingresar un precio base válido.");
-      isValid = false;
-    }
-
-    if (!locationSubasta) {
-      toastRef.current.show("Debes localizar a la subasta en el mapa.", 3000);
-      isValid = false;
-    } else if (size(imagesSelected) === 0) {
-      toastRef.current.show(
-        "Debes agregar al menos una imagen a la subasta.",
-        3000
-      );
-      isValid = false;
-    }
+    // if (!locationSubasta) {
+    //   toastRef.current.show("Debes localizar a la subasta en el mapa.", 3000);
+    //   isValid = false;
+    // } else if (size(imagesSelected) === 0) {
+    //   toastRef.current.show(
+    //     "Debes agregar al menos una imagen a la subasta.",
+    //     3000
+    //   );
+    //   isValid = false;
+    // }
 
     return isValid;
   };
 
-  const showDatePicker = () => {
-    setDatePickerVisibility(true);
-  };
-  const hideDatePicker = () => {
-    setDatePickerVisibility(false);
-  };
-  const handleConfirm = (date) => {
-    console.warn("A date has been picked: ", date);
-    hideDatePicker();
-    getParsedDate(date);
-  };
+  // const showDatePicker = () => {
+  //   setDatePickerVisibility(true);
+  // };
+  // const hideDatePicker = () => {
+  //   setDatePickerVisibility(false);
+  // };
+  // const handleConfirm = (date) => {
+  //   console.warn("A date has been picked: ", date);
+  //   hideDatePicker();
+  //   getParsedDate(date);
+  // };
 
-  function getParsedDate(date) {
-    const oldDate = new Date(date);
-    const day = oldDate.getDate();
-    const month = oldDate.getMonth() + 1;
-    const year = oldDate.getFullYear();
-    const hour = oldDate.getHours() + 3;
-    const minutes = oldDate.getUTCMinutes();
+  // function getParsedDate(date) {
+  //   const oldDate = new Date(date);
+  //   const day = oldDate.getDate();
+  //   const month = oldDate.getMonth() + 1;
+  //   const year = oldDate.getFullYear();
+  //   const hour = oldDate.getHours() + 3;
+  //   const minutes = oldDate.getUTCMinutes();
 
-    const fecha = day + "-" + month + "-" + year;
-    const hora = hour + ":" + minutes;
-    setFecha(fecha);
-    setHora(hora);
-  }
+  //   const fecha = day + "-" + month + "-" + year;
+  //   const hora = hour + ":" + minutes;
+  //   setFecha(fecha);
+  //   setHora(hora);
+  // }
 
-  const showHourPicker = () => {
-    setHourPickerVisibility(true);
-  };
-  const hideHourPicker = () => {
-    setHourPickerVisibility(false);
-  };
-  const handleHourConfirm = (h) => {
-    console.warn("A hour has been picked: ", h);
-    hideHourPicker();
-    getParsedHour(h);
-  };
+  // const showHourPicker = () => {
+  //   setHourPickerVisibility(true);
+  // };
+  // const hideHourPicker = () => {
+  //   setHourPickerVisibility(false);
+  // };
+  // const handleHourConfirm = (h) => {
+  //   console.warn("A hour has been picked: ", h);
+  //   hideHourPicker();
+  //   getParsedHour(h);
+  // };
 
-  function getParsedHour(h) {
-    const oldHour = new Date(h);
-    const hour = oldHour.getHours() + 3;
-    const minutes = oldHour.getUTCMinutes();
+  // function getParsedHour(h) {
+  //   const oldHour = new Date(h);
+  //   const hour = oldHour.getHours() + 3;
+  //   const minutes = oldHour.getUTCMinutes();
 
-    const hora = hour + ":" + minutes;
-    setHoraFin(hora);
-  }
+  //   const hora = hour + ":" + minutes;
+  //   setHoraFin(hora);
+  // }
 
   const calcularCategoria = (precioB) => {
     let p = "";
@@ -281,10 +290,11 @@ export default function AddSubastaForm({ toastRef, setLoading, navigation }) {
   };
 
   const clearErrors = () => {
-    setErrorAddress(null);
+    // setErrorAddress(null);
     setErrorDescription(null);
     setErrorName(null);
-    setErrorPrecioBase(null);
+    // setErrorPrecioBase(null);
+    setErrorCheckbox(null);
   };
 
   // const getCurrencySubasta= (data) =>{
@@ -299,15 +309,15 @@ export default function AddSubastaForm({ toastRef, setLoading, navigation }) {
         setFormData={setFormData}
         errorName={errorName}
         errorDescription={errorDescription}
-        errorAddress={errorAddress}
-        errorPrecioBase={errorPrecioBase}
-        setIsVisibleMap={setIsVisibleMap}
-        locationSubasta={locationSubasta}
+        // errorAddress={errorAddress}
+        // errorPrecioBase={errorPrecioBase}
+        //setIsVisibleMap={setIsVisibleMap}
+        //locationSubasta={locationSubasta}
         setDataMoneda={setDataMoneda}
       />
       {inputs.map((input, key) => (
         <View style={styles.viewForm}>
-          <Text style={{ fontSize: 15, marginBottom: 10, fontWeight: "bold" }}>
+          <Text style={{ fontSize: 15, marginBottom: 10, fontWeight: "bold", marginTop:10}}>
             Descripcion del Catálogo:
           </Text>
           <Input
@@ -367,7 +377,7 @@ export default function AddSubastaForm({ toastRef, setLoading, navigation }) {
         containerStyle={styles.btnContainer}
         onPress={addHandler}
       />
-      <View>
+      {/* <View>
         <Button
           title="Ingresar Fecha y Hora de Inicio"
           onPress={showDatePicker}
@@ -394,82 +404,90 @@ export default function AddSubastaForm({ toastRef, setLoading, navigation }) {
           onConfirm={handleHourConfirm}
           onCancel={hideHourPicker}
         />
-      </View>
+      </View> */}
+      <View>
+                <Checkbox.Item label="Declaro que los bienes a subastar son de mi pertenencia y no poseo ningun impedimento para subastarlos"
+                status={checked ? 'checked' : 'unchecked'}
+                onPress={() => {
+                    setChecked(!checked);
+                }}/>                
+             <Input errorMessage={errorCheckbox} />
+             </View>
       <Button
-        title="Crear Subasta"
+        title="Agregar productos a subastar"
         onPress={addSubasta}
         buttonStyle={styles.btnAddSubasta}
       />
-      <MapSubasta
+      {/* <MapSubasta
         isVisibleMap={isVisibleMap}
         setIsVisibleMap={setIsVisibleMap}
         setLocationSubasta={setLocationSubasta}
         toastRef={toastRef}
-      />
+      /> */}
     </ScrollView>
   );
 }
 
-function MapSubasta({
-  isVisibleMap,
-  setIsVisibleMap,
-  setLocationSubasta,
-  toastRef,
-}) {
-  const [newRegion, setNewRegion] = useState(null);
+// function MapSubasta({
+//   isVisibleMap,
+//   setIsVisibleMap,
+//   setLocationSubasta,
+//   toastRef,
+// }) {
+//   const [newRegion, setNewRegion] = useState(null);
 
-  useEffect(() => {
-    (async () => {
-      const response = await getCurrentLocation();
-      if (response.status) {
-        setNewRegion(response.location);
-      }
-    })();
-  }, []);
+//   useEffect(() => {
+//     (async () => {
+//       const response = await getCurrentLocation();
+//       if (response.status) {
+//         setNewRegion(response.location);
+//       }
+//     })();
+//   }, []);
 
-  const confirmLocation = () => {
-    setLocationSubasta(newRegion);
-    toastRef.current.show("Localización guardada correctamente.", 3000);
-    setIsVisibleMap(false);
-  };
+//   const confirmLocation = () => {
+//     setLocationSubasta(newRegion);
+//     toastRef.current.show("Localización guardada correctamente.", 3000);
+//     setIsVisibleMap(false);
+//   };
 
-  return (
-    <Modal isVisible={isVisibleMap} setVisible={setIsVisibleMap}>
-      <View>
-        {newRegion && (
-          <MapView
-            style={styles.mapStyle}
-            initialRegion={newRegion}
-            showsUserLocation={true}
-            onRegionChange={(region) => setNewRegion(region)}
-          >
-            <MapView.Marker
-              coordinate={{
-                latitude: newRegion.latitude,
-                longitude: newRegion.longitude,
-              }}
-              draggable
-            />
-          </MapView>
-        )}
-        <View style={styles.viewMapBtn}>
-          <Button
-            title="Guardar Ubicación"
-            containerStyle={styles.viewMapBtnContainerSave}
-            buttonStyle={styles.viewMapBtnSave}
-            onPress={confirmLocation}
-          />
-          <Button
-            title="Cancelar Ubicación"
-            containerStyle={styles.viewMapBtnContainerCancel}
-            buttonStyle={styles.viewMapBtnCancel}
-            onPress={() => setIsVisibleMap(false)}
-          />
-        </View>
-      </View>
-    </Modal>
-  );
-}
+//   return (
+//     <Modal isVisible={isVisibleMap} setVisible={setIsVisibleMap}>
+//       <View>
+//         {newRegion && (
+//           <MapView
+//             style={styles.mapStyle}
+//             initialRegion={newRegion}
+//             showsUserLocation={true}
+//             onRegionChange={(region) => setNewRegion(region)}
+//           >
+//             <MapView.Marker
+//               coordinate={{
+//                 latitude: newRegion.latitude,
+//                 longitude: newRegion.longitude,
+//               }}
+//               draggable
+//             />
+//           </MapView>
+//         )}
+//         <View style={styles.viewMapBtn}>
+//           <Button
+//             title="Guardar Ubicación"
+//             containerStyle={styles.viewMapBtnContainerSave}
+//             buttonStyle={styles.viewMapBtnSave}
+//             onPress={confirmLocation}
+//           />
+//           <Button
+//             title="Cancelar Ubicación"
+//             containerStyle={styles.viewMapBtnContainerCancel}
+//             buttonStyle={styles.viewMapBtnCancel}
+//             onPress={() => setIsVisibleMap(false)}
+//           />
+//         </View>
+//       </View>
+//     </Modal>
+//   );
+// }
 
 function ImageSubasta({ imageSubasta }) {
   return (
@@ -546,10 +564,10 @@ function FormAdd({
   setFormData,
   errorName,
   errorDescription,
-  errorAddress,
-  errorPrecioBase,
-  setIsVisibleMap,
-  locationSubasta,
+  //errorAddress,
+  //errorPrecioBase,
+  //setIsVisibleMap,
+  //locationSubasta,
   setDataMoneda,
 }) {
   const onChange = (e, type) => {
@@ -568,7 +586,7 @@ function FormAdd({
         onChange={(e) => onChange(e, "name")}
         errorMessage={errorName}
       />
-      <Input
+      {/* <Input
         placeholder="Dirección de la subasta"
         defaultValue={formData.address}
         onChange={(e) => onChange(e, "address")}
@@ -579,7 +597,16 @@ function FormAdd({
           color: locationSubasta ? "#442484" : "#c2c2c2",
           onPress: () => setIsVisibleMap(true),
         }}
-      />
+      /> */}
+      <Input
+          placeholder="Descripción de la subasta"
+          multiline
+          containerStyle={styles.textArea}
+          defaultValue={formData.description}
+          onChange={(e) => onChange(e, "description")}
+          errorMessage={errorDescription}
+        />
+      <Text>Selecciona la moneda deseada: </Text>
       <View style={styles.currencyView}>
         <CurrencyPicker
           enable={true}
@@ -589,9 +616,6 @@ function FormAdd({
           showCurrencyName={false}
           showCurrencyCode={true}
           onSelectCurrency={(data) => {
-            //console.log("llega aca")
-            console.log(typeof data);
-            console.log(data["code"]);
             setDataMoneda(data["code"]);
           }}
           onOpen={() => {
@@ -628,22 +652,14 @@ function FormAdd({
           showCloseButton={true}
           showModalTitle={true}
         />
-        <Input
+        {/* <Input
           placeholder="Precio base"
           containerStyle={styles.inputPrecioBase}
           defaultValue={formData.precioBase}
           onChange={(e) => onChange(e, "precioBase")}
           errorMessage={errorPrecioBase}
-        />
+        /> */}
       </View>
-        <Input
-          placeholder="Descripción de la subasta"
-          multiline
-          containerStyle={styles.textArea}
-          defaultValue={formData.description}
-          onChange={(e) => onChange(e, "description")}
-          errorMessage={errorDescription}
-        />
     </View>
   );
 }
@@ -651,9 +667,7 @@ function FormAdd({
 const defaultFormValues = () => {
   return {
     name: "",
-    description: "",
-    address: "",
-    precioBase: "",
+    description: ""
   };
 };
 

@@ -9,6 +9,7 @@ import GeneratePassword from '../screens/account/GeneratePassword'
 import AccountOptions from '../components/account/AccountOptions'
 import PaymentsOptions from '../screens/account/PaymentOptions'
 import AddPayment from '../screens/account/AddPayment'
+import UserActivityInfo from '../screens/account/UserActivityInfo'
 
 const Stack = createStackNavigator()
 
@@ -54,6 +55,11 @@ export default function AccountStack() {
                 name="add-payment"
                 component={AddPayment}
                 options={{ title: "Agregar Medio de Pago" }}
+            />
+            <Stack.Screen
+                name="user-activity-info"
+                component={UserActivityInfo}
+                options={{ title: "Información de Actividad" }}
             />
         </Stack.Navigator>
     )

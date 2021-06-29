@@ -17,11 +17,6 @@ export default function SubastasStack() {
                 options={{ title: "Subastas" }}
             />
             <Stack.Screen
-                name="add-subasta"
-                component={AddSubasta}
-                options={{ title: "Crear Subasta" }}
-            />
-            <Stack.Screen
                 name="subasta"
                 component={Subasta}
             />
