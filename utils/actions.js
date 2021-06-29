@@ -440,53 +440,6 @@ export const updateDireccion = async(newData) => {
     return result   
 }
 
-export const getPayments = async(limitPayments) => {
-    const result = { statusResponse: true, error: null, payments: [], startPayment: null }
-    try {
-        const response = await db
-            .collection("payments")
-            .orderBy("createAt", "desc")
-            .limit(limitPayments)
-            .get()
-        if (response.docs.length > 0) {
-            result.startPayment = response.docs[response.docs.length - 1]
-        }
-        response.forEach((doc) => {
-            const payment = doc.data()
-            payment.id = doc.id
-            result.payments.push(payment)
-        })
-    } catch (error) {
-        result.statusResponse = false
-        result.error = error
-    }
-    return result     
-}
-
-export const getMorePayments = async(limitPayments, startPayment) => {
-    const result = { statusResponse: true, error: null, payments: [], startPayment: null }
-    try {
-        const response = await db
-            .collection("payments")
-            .orderBy("createAt", "desc")
-            .startAfter(startPayment.data().createAt)
-            .limit(limitPayments)
-            .get()
-        if (response.docs.length > 0) {
-            result.startPayment = response.docs[response.docs.length - 1]
-        }
-        response.forEach((doc) => {
-            const payment = doc.data()
-            payment.id = doc.id
-            result.payments.push(payment)
-        })
-    } catch (error) {
-        result.statusResponse = false
-        result.error = error
-    }
-    return result     
-}
-
 export const addNewPuja = async(idSubasta,puja,uidUsuario,horario) => {
     const result = { statusResponse: true, error: null }
     try {
@@ -557,4 +510,21 @@ export const getMoreItemsCatalogo = async(limitSubastas, startSubasta) => {
         result.error = error
     }
     return result     
+}
+
+
+export const uploadImageCatalogo = async(image,path,name,uidcat) => {
+    const result = { statusResponse: false, error: null, url: null }
+    const ref = firebase.storage().ref(path).child(name).ref(catalogo).child(uidcat)
+    const blob = await fileToBlob(image)
+
+    try {
+        await ref.put(blob)
+        const url = await firebase.storage().ref(`${path}/${name}/${catalogo}/${uidcat}`).getDownloadURL()
+        result.statusResponse = true
+        result.url = url
+    } catch (error) {
+        result.error = error
+    }
+    return result
 }

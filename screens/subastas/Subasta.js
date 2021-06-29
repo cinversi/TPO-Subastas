@@ -2,7 +2,7 @@ import React, { useState, useCallback, useRef, useEffect } from 'react'
 import { View } from 'react-native'
 import { Alert, Dimensions, StyleSheet, Text, ScrollView } from 'react-native'
 import { ListItem, Icon, Input, Button } from 'react-native-elements'
-import { isEmpty, map } from 'lodash'
+import { isEmpty, map, size} from 'lodash'
 import { useFocusEffect } from '@react-navigation/native'
 import firebase from 'firebase/app'
 import Toast from 'react-native-easy-toast'
@@ -11,17 +11,9 @@ import CarouselImages from '../../components/CarouselImages'
 import Loading from '../../components/Loading'
 import MapSubasta from '../../components/subastas/MapSubasta'
 import ListReviews from '../../components/subastas/ListReviews'
-import { 
-    addDocumentWithoutId, 
-    getCurrentUser, 
-    getDocumentById, 
-    getIsFavorite, 
-    deleteFavorite, 
-    sendPushNotification, 
-    setNotificationMessage, 
-    getUsersFavorite
-} from '../../utils/actions'
-import Modal from '../../components/Modal'
+import ListItems from '../../components/subastas/ListItems'
+
+import { getDocumentById, getIsFavorite } from '../../utils/actions'
 
 const widthScreen = Dimensions.get("window").width
 
@@ -31,11 +23,11 @@ export default function Subasta({ navigation, route }) {
     
     const [subasta, setSubasta] = useState(null)
     const [activeSlide, setActiveSlide] = useState(0)
-    const [isFavorite, setIsFavorite] = useState(false)
     const [userLogged, setUserLogged] = useState(false)
     const [currentUser, setCurrentUser] = useState(null)
     const [loading, setLoading] = useState(false)
-    const [modalNotification, setModalNotification] = useState(false)
+    const [catItems, setCatItems] = useState([])
+
 
     firebase.auth().onAuthStateChanged(user => {
         user ? setUserLogged(true) : setUserLogged(false)
@@ -49,6 +41,7 @@ export default function Subasta({ navigation, route }) {
             (async() => {
                 const response = await getDocumentById("subastas", id)
                 if (response.statusResponse) {
+                    console.log(response.document.catalogo)
                     setSubasta(response.document)
                 } else {
                     setSubasta({})
@@ -58,47 +51,17 @@ export default function Subasta({ navigation, route }) {
         }, [])
     )
 
-    useEffect(() => {
-        (async() => {
-            if (userLogged && subasta) {
-                const response = await getIsFavorite(subasta.id)
-                response.statusResponse && setIsFavorite(response.isFavorite)
-            }
-        })()
-    }, [userLogged, subasta])
-
-    const addFavorite = async() => {
-        if (!userLogged) {
-            toastRef.current.show("Para agregar la subasta a favoritos debes estar logueado.", 3000)
-            return
-        }
-
-        setLoading(true)
-        const response = await addDocumentWithoutId("favorites", {
-            idUser: getCurrentUser().uid,
-            idSubasta: subasta.id
-        })
-        setLoading(false)
-        if (response.statusResponse) {
-            setIsFavorite(true)
-            toastRef.current.show("Subasta añadida a favoritos.", 3000)
-        } else {
-            toastRef.current.show("No se pudo adicionar la subasta a favoritos. Por favor intenta más tarde.", 3000)
-        }
-    }
-
-    const removeFavorite = async() => {
-        setLoading(true)
-        const response = await deleteFavorite(subasta.id)
-        setLoading(false)
-
-        if (response.statusResponse) {
-            setIsFavorite(false)
-            toastRef.current.show("Subasta eliminado de favoritos.", 3000)
-        } else {
-            toastRef.current.show("No se pudo eliminar la subasta de favoritos. Por favor intenta más tarde.", 3000)
-        }
-    }
+    // useFocusEffect(
+    //     useCallback(() => {
+    //         async function getData() {
+    //             setLoading(true)
+    //             const currentSubasta = await getDocumentById("subastas", id)
+    //             setCatItems(currentSubasta.document.catalogo)
+    //             setLoading(false)
+    //         }
+    //         getData()
+    //     }, [])
+    // )
 
     if (!subasta) {
         return <Loading isVisible={true} text="Cargando..."/>
@@ -118,23 +81,29 @@ export default function Subasta({ navigation, route }) {
                 description={subasta.description}
                 categoria={subasta.categoria}
             />
+            {
+                size(catItems) > 0 ? (
+                    <ListItems
+                        catItems={catItems}
+                        navigation={navigation}
+                        handleLoadMore={() => {}}
+                    />
+                ) : (
+                    <View style={styles.notFoundView}>
+                        <Text style={styles.notFoundText}>No hay productos cargados.</Text>
+                    </View>
+                )
+            }
             <SubastaInfo
                 name={subasta.name}
                 location={subasta.location}
                 address={subasta.address}
                 currentUser={currentUser}
                 setLoading={setLoading}
-                setModalNotification={setModalNotification}
             />
             <ListReviews
                 navigation={navigation}
                 idSubasta={subasta.id}
-            />
-            <SendMessage
-                modalNotification={modalNotification}
-                setModalNotification={setModalNotification}
-                setLoading={setLoading}
-                subasta={subasta}
             />
             <Toast ref={toastRef} position="center" opacity={0.9}/>
             <Loading isVisible={loading} text="Por favor espere..."/>
@@ -142,103 +111,10 @@ export default function Subasta({ navigation, route }) {
     )
 }
 
-function SendMessage ({ modalNotification, setModalNotification, setLoading, subasta }) {
-    const [title, setTitle] = useState(null)
-    const [errorTitle, setErrorTitle] = useState(null)
-    const [message, setMessage] = useState(null)
-    const [errorMessage, setErrorMessage] = useState(null)
-
-    const sendNotification = async() => {
-        if (!validForm()) {
-            return
-        }
-
-        setLoading(true)
-        const userName = getCurrentUser().displayName ? getCurrentUser().displayName : "Anónimo"
-        const theMessage = `${message}, del subasta: ${subasta.name}`
-
-        const usersFavorite = await getUsersFavorite(subasta.id)
-        if (!usersFavorite.statusResponse) {
-            setLoading(false)
-            Alert.alert("Error al obtener los usuarios que aman la subasta.")
-            return
-        }
-
-        await Promise.all (
-            map(usersFavorite.users, async(user) => {
-                const messageNotification = setNotificationMessage(
-                    user.token,
-                    `${userName}, dijo: ${title}`,
-                    theMessage,
-                    { data: theMessage}
-                )
-        
-                await sendPushNotification(messageNotification)
-            })
-        )
-
-        setLoading(false)
-        setTitle(null)
-        setMessage(null)
-        setModalNotification(false)
-    }
-
-    const validForm = () => {
-        let isValid = true;
-
-        if (isEmpty(title)) {
-            setErrorTitle("Debes ingresar un título a tu mensaje.")
-            isValid = false
-        }
-
-        if (isEmpty(message)) {
-            setErrorMessage("Debes ingresar un mensaje.")
-            isValid = false
-        }
-
-        return isValid
-    }
-
-    return (
-        <Modal
-            isVisible={modalNotification}
-            setVisible={setModalNotification}
-        >
-            <View style={styles.modalContainer}>
-                <Text style={styles.textModal}>
-                    Envíale un mensaje a los amantes de {subasta.name}
-                </Text>
-                <Input
-                    placeholder="Título del mensaje..."
-                    onChangeText={(text) => setTitle(text)}
-                    value={title}
-                    errorMessage={errorTitle}
-                />
-                <Input
-                    placeholder="Mensaje..."
-                    multiline
-                    inputStyle={styles.textArea}
-                    onChangeText={(text) => setMessage(text)}
-                    value={message}
-                    errorMessage={errorMessage}
-                />
-                <Button
-                    title="Enviar Mensaje"
-                    buttonStyle={styles.btnSend}
-                    containerStyle={styles.btnSendContainer}
-                    onPress={sendNotification}
-                />
-            </View>
-        </Modal>
-    )
-}
-
 function SubastaInfo({ 
     name, 
     location, 
-    address,
-    currentUser,
-    setModalNotification 
+    address
 }) {
     const listInfo = [
         { type: "addres", text: address, iconLeft: "map-marker"}

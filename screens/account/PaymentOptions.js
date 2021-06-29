@@ -7,7 +7,7 @@ import firebase from 'firebase/app'
 
 import Loading from '../../components/Loading'
 import ListPaymentOptions from '../../components/account/ListPaymentOptions'
-import { getCurrentUser, getDocumentById, getMorePayments, getPayments } from '../../utils/actions'
+import { getCurrentUser, getDocumentById } from '../../utils/actions'
 
 
 export default function PaymentsOptions({ navigation }) {
@@ -15,9 +15,6 @@ export default function PaymentsOptions({ navigation }) {
     const [startPayment, setStartPayment] = useState(null)
     const [payments, setPayments] = useState([])
     const [loading, setLoading] = useState(false)
-    console.log("11111111111111111111111")
-
-    const limitPayments = 7
 
     useEffect(() => {
         firebase.auth().onAuthStateChanged((userInfo) => {
@@ -30,30 +27,14 @@ export default function PaymentsOptions({ navigation }) {
             async function getData() {
                 setLoading(true)
                 const currentUser = getCurrentUser().uid;
-                console.log("llega aca!!!!2")
                 const response = await getDocumentById("users", currentUser);
-                console.log(response.document.medioPago)
-                //const response = await getPayments(limitPayments, currentUser)
                 setPayments(response.document.medioPago)
+                console.log(response.document.medioPago)
                 setLoading(false)
             }
             getData()
         }, [])
     )
-
-    /*const handleLoadMore = async() => {
-        if (!startPayment) {
-            return
-        }
-
-        setLoading(true)
-        const response = await getMorePayments(limitPayments, startPayment)
-        if (response.statusResponse) {
-            setStartPayment(response.startPayment)
-            setPayments([...payments, ...response.payments])
-        }
-        setLoading(false)
-    }*/
 
     if (user === null) {
         return <Loading isVisible={true} text="Cargando..."/>
