@@ -395,11 +395,6 @@ export default function AddSubastaForm({ toastRef, setLoading, navigation }) {
           onCancel={hideHourPicker}
         />
       </View>
-      <UploadImage
-        toastRef={toastRef}
-        imagesSelected={imagesSelected}
-        setImagesSelected={setImagesSelected}
-      />
       <Button
         title="Crear Subasta"
         onPress={addSubasta}
