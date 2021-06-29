@@ -34,7 +34,12 @@ export default function AddSubastaForm({ toastRef, setLoading, navigation }) {
       artista: "",
       fechaObra: "",
       historiaObra: "",
-      itemUuid: ""
+      itemUuid: "",
+      listadoPujas: [{
+        nombrePujador: "app",
+        valorPujado: "3200",//formData.precioBase,
+        horarioPuja: new Date().getDate(),
+        }]
     },
   ]);
   //const [fechaSubasta, setFecha] = useState(null);
@@ -54,7 +59,12 @@ export default function AddSubastaForm({ toastRef, setLoading, navigation }) {
       artista: "",
       fechaObra: "",
       historiaObra: "",
-      itemUuid: ""
+      itemUuid: "",
+      listadoPujas: [{
+        nombrePujador: "app", 
+        valorPujado: "3200",//formData.precioBase,
+        horarioPuja: new Date().getDate(),
+        }],
     });
     setInputs(_inputs);
   };

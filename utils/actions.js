@@ -447,7 +447,6 @@ export const addNewPuja = async(idSubasta,puja,uidUsuario,horario) => {
     try {
         db.collection("subastas").doc(idSubasta).update({listadoPujas:firebase.firestore.FieldValue.arrayUnion(...[{nombrePujador:uidUsuario,valorPujado:puja,horarioPuja:horario}])})
      } catch (error) {
-        console.log(result)
         result.statusResponse = false
         result.error = error
     }
@@ -460,7 +459,6 @@ export const addNewPaymentMethod = async(idUser,number,expiry,cvc,name,postalCod
         const paymentUuid = uuid();
         db.collection("users").doc(idUser).update({medioPago:firebase.firestore.FieldValue.arrayUnion(...[{uuid:paymentUuid,number:number,expiry:expiry,cvc:cvc,name:name,postalCode:postalCode,type:type}])})
      } catch (error) {
-        console.log(result)
         result.statusResponse = false
         result.error = error
     }
@@ -535,7 +533,6 @@ export const uploadImageCatalogo = async(image,path,name,uidcat) => {
 export const getMisSubastas = async(limitSubastas) => {
     const result = { statusResponse: true, error: null, subastas: [], startSubasta: null }
     try {
-        console.log("este es el rematador",getCurrentUser().uid)
         const response = await db
             .collection("subastas")
             .where("rematador", "==", getCurrentUser().uid)

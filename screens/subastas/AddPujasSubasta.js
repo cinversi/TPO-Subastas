@@ -9,8 +9,8 @@ import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view
 import Loading from '../../components/Loading'
 import { addDocumentWithoutId, getCurrentUser, getDocumentById, updateDocument, addNewPuja,} from '../../utils/actions'
  
-export default function AddReviewSubasta({ navigation, route }) {
-    const { idSubasta } = route.params
+export default function AddPujasSubasta({ navigation, route }) {
+    const { id,uuid,listadoPujas } = route.params
     const toastRef = useRef()
  
     const [title, setTitle] = useState("")
@@ -23,23 +23,25 @@ export default function AddReviewSubasta({ navigation, route }) {
     const [loading, setLoading] = useState(false)
     const [subasta, setSubasta] = useState(null)
     const [errorPuja,setErrorPuja] = useState(null)
-    const [listadoPujas, setListadoPujas] = useState([{key: '',nombrePujador: '',valorPujado: ''}])
+    //const [listadoPujas, setListadoPujas] = useState([{key: '',nombrePujador: '',valorPujado: ''}])
  
-    useFocusEffect(
-        useCallback(() => {
-            async function getData() {
-                const responseGetSubasta = await getDocumentById("subastas", idSubasta)
-                setSubasta(responseGetSubasta.document)
-            }
-            getData()
-        }, [])
-    )
+    // useFocusEffect(
+    //     useCallback(() => {
+    //         async function getData() {
+    //             const responseGetSubasta = await getDocumentById("subastas", id)
+    //             setSubasta(responseGetSubasta.document)
+    //         }
+    //         getData()
+    //     }, [])
+    // )
+
+    console.log("aca estamos en addpujas subasta", listadoPujas)
  
     useFocusEffect(
         useCallback(() => {
             async function getUltimaPuja() {
                 setLoading(true)
-                const response = await getDocumentById("subastas", idSubasta)
+                const response = await getDocumentById("subastas", id,uuid)
                 if ((size(response.document.listadoPujas))>1){                                   
                     const ultimoValorPujado=response.document.listadoPujas[(size(response.document.listadoPujas))-1].valorPujado
                     const ultimoNombrePujador=response.document.listadoPujas[(size(response.document.listadoPujas))-1].nombrePujador
@@ -78,7 +80,7 @@ export default function AddReviewSubasta({ navigation, route }) {
         }
         setLoading(true)
         const horarioPuja=new Date()
-        const responseAddPuja = await addNewPuja(idSubasta,puja,getCurrentUser().uid,horarioPuja )
+        const responseAddPuja = await addNewPuja(id,puja,getCurrentUser().uid,horarioPuja )
         if (!responseAddPuja.statusResponse) {
             setLoading(false)
             toastRef.current.show("Error al realizar puja", 3000)

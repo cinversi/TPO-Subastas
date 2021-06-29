@@ -40,7 +40,6 @@ export default function miSubasta({ navigation, route }) {
             (async() => {
                 const response = await getDocumentById("subastas", id)
                 if (response.statusResponse) {
-                    console.log(response.document.catalogo)
                     setSubasta(response.document)
                     setCatItems(response.document.catalogo)
                 } else {

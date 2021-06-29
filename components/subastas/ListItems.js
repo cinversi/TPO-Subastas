@@ -3,9 +3,10 @@ import { FlatList, StyleSheet, Text, View, TouchableOpacity } from 'react-native
 import { Button } from 'react-native-elements'
 import { useFocusEffect } from '@react-navigation/native'
 import firebase from 'firebase/app'
+import {size} from 'lodash'
 
 
-export default function ListItems({ catItems, navigation, handleLoadMore }) {
+export default function ListItems({ catItems, id, navigation, handleLoadMore }) {
 
     return (
         <View>
@@ -15,17 +16,27 @@ export default function ListItems({ catItems, navigation, handleLoadMore }) {
                 onEndReachedThreshold={0.5}
                 onEndReached={handleLoadMore}
                 renderItem={(catItem) => (
-                    <CatItem catItem={catItem} navigation={navigation}/>
+                    <CatItem 
+                        catItem={catItem} 
+                        id={id}
+                        navigation={navigation}/>
                 )}
             />
         </View>
     )
 }
 
-function CatItem({ catItem, navigation }) {
+function CatItem({ catItem,id, navigation }) {
     const [userLogged, setUserLogged] = useState(false)
     const { uuid, nombreItem, descripcion, cantidad } = catItem.item
+    const [listadoPujas, setListadoPujas] = catItem.item.listadoPujas
+    console.log("adentor de la funcion:",listadoPujas)
 
+    // for (let key in listadoPujas) {
+    //     console.log(key,listadoPujas["horarioPuja"]);
+    //     //console.log(listadoPujas[0])
+    //   }
+    
     const goCatItem = () => {
         navigation.navigate("catItem", { uuid, nombreItem })
     } 
@@ -46,7 +57,7 @@ function CatItem({ catItem, navigation }) {
                             <Button
                                 buttonStyle={styles.btnAddPayment}
                                 title="Ver precio"
-                                //onPress={() => navigation.navigate("add-pujas-subasta", { idSubasta })}
+                                onPress={() => navigation.navigate("add-pujas-subasta", { id,uuid,listadoPujas })}
                             />
                         ) : (
                             <Text 

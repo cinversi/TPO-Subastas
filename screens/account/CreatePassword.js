@@ -14,7 +14,6 @@ export default function RecoverPassword({ navigation }) {
     const validateData = () => {
         setErrorEmail(null)
         let valid = true
-        console.log("email", email)
 
         if (!validateEmail(email)) {
             setErrorEmail("Debes ingresar un email válido.")

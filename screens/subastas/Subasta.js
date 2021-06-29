@@ -40,7 +40,6 @@ export default function Subasta({ navigation, route }) {
             (async() => {
                 const response = await getDocumentById("subastas", id)
                 if (response.statusResponse) {
-                    console.log(response.document.catalogo)
                     setSubasta(response.document)
                     setCatItems(response.document.catalogo)
                 } else {
@@ -77,6 +76,7 @@ export default function Subasta({ navigation, route }) {
                 size(catItems) > 0 ? (
                     <ListItems
                         catItems={catItems}
+                        id={id}
                         navigation={navigation}
                         handleLoadMore={() => {}}
                     />

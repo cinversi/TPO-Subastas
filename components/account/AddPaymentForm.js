@@ -14,8 +14,6 @@ export default class AddPaymentForm extends Component {
     const {formValues} = this.state;
     const currentUser = getCurrentUser().uid;
     this.setState({ isLoading: true });
-    console.log("sfsdfsdfsdf")
-    console.log(formValues)
     addNewPaymentMethod(
       currentUser,
       formValues.values.number,
@@ -31,7 +29,6 @@ export default class AddPaymentForm extends Component {
   };
 
   _onChange = (formData) => {
-    //console.log(JSON.stringify(formData, null, " "))
     this.setState({ formValues: { ...formData } });
   };
   _onFocus = (field) => console.log("focusing", field);

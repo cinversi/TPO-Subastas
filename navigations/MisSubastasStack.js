@@ -25,11 +25,6 @@ export default function MisSubastasStack() {
                 name="miSubasta"
                 component={miSubasta}
             />
-            <Stack.Screen
-                name="add-pujas-subasta"
-                component={AddPujasSubasta}
-                options={{ title: "Subasta" }}
-            />
         </Stack.Navigator>
     )
 }

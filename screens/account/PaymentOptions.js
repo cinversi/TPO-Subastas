@@ -29,7 +29,6 @@ export default function PaymentsOptions({ navigation }) {
                 const currentUser = getCurrentUser().uid;
                 const response = await getDocumentById("users", currentUser);
                 setPayments(response.document.medioPago)
-                console.log(response.document.medioPago)
                 setLoading(false)
             }
             getData()

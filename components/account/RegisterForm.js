@@ -26,7 +26,7 @@ export default function RegisterForm() {
     const onChange = (e,type) =>{
         setFormData({...formData, [type]:e.nativeEvent.text})
     }
- 
+    
     const doRegisterUser = async() => {
         if (!validateData()){
             return;
