@@ -28,9 +28,11 @@ export default function ListItems({ catItems, id, navigation, handleLoadMore }) 
 
 function CatItem({ catItem,id, navigation }) {
     const [userLogged, setUserLogged] = useState(false)
-    const { uuid, nombreItem, descripcion, cantidad } = catItem.item
-    const [listadoPujas, setListadoPujas] = catItem.item.listadoPujas
-    console.log("adentor de la funcion:",listadoPujas)
+    const { uuid, nombreItem, descripcion, cantidad,listadoPujas} = catItem.item
+    //const [listadoPujas, setListadoPujas] = catItem.item.listadoPujas
+    //console.log("adentor de la funcion:",listadoPujas)
+
+    console.log("solucionStoury",listadoPujas)
 
     // for (let key in listadoPujas) {
     //     console.log(key,listadoPujas["horarioPuja"]);

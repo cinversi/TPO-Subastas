@@ -32,12 +32,12 @@ export const closeSession = () => {
     return firebase.auth().signOut()
 }
 
-export const registerUser = async(email,password,nombre,apellido,dni,direccion,categoria,mediosPago) => {
+export const registerUser = async(email,password,nombre,apellido,dni,direccion,categoria,mediosPago,role) => {
     const result = { statusResponse: true, error: null}
     const user = firebase.auth().createUserWithEmailAndPassword(email, 
         password).then(cred => {
         return firebase.firestore().collection('users').doc(cred.user.uid).set({
-            email,password,nombre,apellido,dni,direccion,categoria,mediosPago
+            email,nombre,apellido,dni,direccion,categoria,mediosPago,role
           })
         })
     return result

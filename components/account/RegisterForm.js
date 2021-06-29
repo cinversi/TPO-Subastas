@@ -33,7 +33,7 @@ export default function RegisterForm() {
         }
  
         setLoading(true)
-        const result = await registerUser(formData.email, "123456",formData.nombre,formData.apellido,formData.dni,formData.direccion,"comun",mediosPago)
+        const result = await registerUser(formData.email, "123456",formData.nombre,formData.apellido,formData.dni,formData.direccion,"comun",mediosPago,"user")
         setLoading(false)
  
         if (!result.statusResponse){
@@ -50,7 +50,7 @@ export default function RegisterForm() {
         setErrorApellido("")
         setErrorDNI("")
         setErrorDireccion("")
-        setErrorDireccion("")
+        setErrorCheckbox("")
         let isValid = true
         
         if(!validateEmail(formData.email)) {
