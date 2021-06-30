@@ -9,8 +9,6 @@ import Toast from 'react-native-easy-toast'
 
 import CarouselImages from '../../components/CarouselImages'
 import Loading from '../../components/Loading'
-import MapSubasta from '../../components/subastas/MapSubasta'
-import ListReviews from '../../components/subastas/ListReviews'
 import ListItems from '../../components/subastas/ListItems'
 
 import { getDocumentById, getIsFavorite } from '../../utils/actions'

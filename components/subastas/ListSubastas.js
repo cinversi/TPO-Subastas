@@ -39,7 +39,6 @@ function Subasta({ subasta, navigation, handleLoadMore }) {
                 </View>
                 <View>
                     <Text style={styles.subastaTitle}>{name}</Text>
-                    <Text style={styles.subastaInformation}>{address}</Text>
                     <Text style={styles.subastaInformation}>Categoría: {categoria}</Text>
                     <Text style={styles.subastaInformation}>Fecha: {fechaSubastar}</Text>
                 </View>

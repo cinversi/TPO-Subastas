@@ -6,7 +6,7 @@ import firebase from 'firebase/app'
 import {size} from 'lodash'
 
 
-export default function ListItems({ catItems, id, navigation, handleLoadMore }) {
+export default function ListItemsMiSubasta({ catItems, id, navigation, handleLoadMore }) {
 
     return (
         <View>
@@ -54,25 +54,6 @@ function CatItem({ catItem,id, navigation }) {
                     <Text style={styles.catitemTitle}>Producto: {nombreItem}</Text>
                     <Text style={styles.catitemInformation}>Descripción: {descripcion}</Text>
                     <Text style={styles.catitemInformation}>Cantidad: {cantidad}</Text>
-                    {
-                        userLogged ? (
-                            <Button
-                                buttonStyle={styles.btnAddPayment}
-                                title="Ver precio"
-                                onPress={() => navigation.navigate("add-pujas-subasta", { id,uuid,listadoPujas })}
-                            />
-                        ) : (
-                            <Text 
-                                style={styles.mustLoginText}
-                                onPress={() => navigation.navigate("login")}
-                            >
-                                Para visualizar el precio del producto o participar en la subasta es necesario iniciar sesión.{"\n"}
-                                <Text style={styles.loginText}>
-                                    Pulsa AQUÍ para hacerlo!
-                                </Text>
-                            </Text>
-                        )
-                    }
                 </View>
             </View>
         </TouchableOpacity>

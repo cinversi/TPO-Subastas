@@ -9,9 +9,7 @@ import Toast from 'react-native-easy-toast'
 
 import CarouselImages from '../../components/CarouselImages'
 import Loading from '../../components/Loading'
-import MapSubasta from '../../components/subastas/MapSubasta'
-import ListReviews from '../../components/subastas/ListReviews'
-import ListItems from '../../components/subastas/ListItems'
+import ListItemsMiSubasta from '../../components/subastas/ListItemsMiSubasta'
 
 import { getDocumentById, getIsFavorite } from '../../utils/actions'
 
@@ -74,7 +72,7 @@ export default function miSubasta({ navigation, route }) {
             <Text style={styles.catalogoTitle}>Catálogo</Text>
             {
                 size(catItems) > 0 ? (
-                    <ListItems
+                    <ListItemsMiSubasta
                         catItems={catItems}
                         navigation={navigation}
                         handleLoadMore={() => {}}
@@ -85,55 +83,9 @@ export default function miSubasta({ navigation, route }) {
                     </View>
                 )
             }
-            <SubastaInfo
-                name={subasta.name}
-                currentUser={currentUser}
-                setLoading={setLoading}
-            />
             <Toast ref={toastRef} position="center" opacity={0.9}/>
             <Loading isVisible={loading} text="Por favor espere..."/>
         </ScrollView>
-    )
-}
-
-function SubastaInfo({ 
-    name, 
-    location, 
-    address
-}) {
-    const listInfo = [
-        { type: "addres", text: address, iconLeft: "map-marker"}
-    ]
-
-    return (
-        <View style={styles.viewSubastaInfo}>
-            <Text style={styles.subastaInfoTitle}>
-                Información sobre la subasta
-            </Text>
-            {/* <MapSubasta
-                location={location}
-                name={name}
-                height={150}
-            /> */}
-            {
-                map(listInfo, (item, index) => (
-                    <ListItem
-                        key={index}
-                        style={styles.containerListItem}
-                    >
-                        <Icon
-                            type="material-community"
-                            name={item.iconLeft}
-                            color="#442484"
-                            onPress={() => actionLeft(item.type)}
-                        />
-                        <ListItem.Content>
-                            <ListItem.Title>{item.text}</ListItem.Title>
-                        </ListItem.Content>
-                    </ListItem>
-                ))
-            }
-        </View>
     )
 }
 

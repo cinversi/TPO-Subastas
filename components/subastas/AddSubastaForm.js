@@ -133,9 +133,7 @@ export default function AddSubastaForm({ toastRef, setLoading, navigation }) {
     const responseUploadImages = await uploadImages();
     const subasta = {
       name: formData.name,
-      //address: formData.address,
       description: formData.description,
-      //location: locationSubasta,
       images: responseUploadImages,
       catalogo: inputs,
       // listadoPujas: [
@@ -300,7 +298,6 @@ export default function AddSubastaForm({ toastRef, setLoading, navigation }) {
   };
 
   const clearErrors = () => {
-    // setErrorAddress(null);
     setErrorDescription(null);
     setErrorName(null);
     // setErrorPrecioBase(null);
@@ -319,10 +316,7 @@ export default function AddSubastaForm({ toastRef, setLoading, navigation }) {
         setFormData={setFormData}
         errorName={errorName}
         errorDescription={errorDescription}
-        // errorAddress={errorAddress}
         // errorPrecioBase={errorPrecioBase}
-        //setIsVisibleMap={setIsVisibleMap}
-        //locationSubasta={locationSubasta}
         setDataMoneda={setDataMoneda}
       />
       {inputs.map((input, key) => (
@@ -428,76 +422,9 @@ export default function AddSubastaForm({ toastRef, setLoading, navigation }) {
         onPress={addSubasta}
         buttonStyle={styles.btnAddSubasta}
       />
-      {/* <MapSubasta
-        isVisibleMap={isVisibleMap}
-        setIsVisibleMap={setIsVisibleMap}
-        setLocationSubasta={setLocationSubasta}
-        toastRef={toastRef}
-      /> */}
     </ScrollView>
   );
 }
-
-// function MapSubasta({
-//   isVisibleMap,
-//   setIsVisibleMap,
-//   setLocationSubasta,
-//   toastRef,
-// }) {
-//   const [newRegion, setNewRegion] = useState(null);
-
-//   useEffect(() => {
-//     (async () => {
-//       const response = await getCurrentLocation();
-//       if (response.status) {
-//         setNewRegion(response.location);
-//       }
-//     })();
-//   }, []);
-
-//   const confirmLocation = () => {
-//     setLocationSubasta(newRegion);
-//     toastRef.current.show("Localización guardada correctamente.", 3000);
-//     setIsVisibleMap(false);
-//   };
-
-//   return (
-//     <Modal isVisible={isVisibleMap} setVisible={setIsVisibleMap}>
-//       <View>
-//         {newRegion && (
-//           <MapView
-//             style={styles.mapStyle}
-//             initialRegion={newRegion}
-//             showsUserLocation={true}
-//             onRegionChange={(region) => setNewRegion(region)}
-//           >
-//             <MapView.Marker
-//               coordinate={{
-//                 latitude: newRegion.latitude,
-//                 longitude: newRegion.longitude,
-//               }}
-//               draggable
-//             />
-//           </MapView>
-//         )}
-//         <View style={styles.viewMapBtn}>
-//           <Button
-//             title="Guardar Ubicación"
-//             containerStyle={styles.viewMapBtnContainerSave}
-//             buttonStyle={styles.viewMapBtnSave}
-//             onPress={confirmLocation}
-//           />
-//           <Button
-//             title="Cancelar Ubicación"
-//             containerStyle={styles.viewMapBtnContainerCancel}
-//             buttonStyle={styles.viewMapBtnCancel}
-//             onPress={() => setIsVisibleMap(false)}
-//           />
-//         </View>
-//       </View>
-//     </Modal>
-//   );
-// }
 
 function ImageSubasta({ imageSubasta }) {
   return (
@@ -574,10 +501,7 @@ function FormAdd({
   setFormData,
   errorName,
   errorDescription,
-  //errorAddress,
   //errorPrecioBase,
-  //setIsVisibleMap,
-  //locationSubasta,
   setDataMoneda,
 }) {
   const onChange = (e, type) => {
@@ -596,18 +520,6 @@ function FormAdd({
         onChange={(e) => onChange(e, "name")}
         errorMessage={errorName}
       />
-      {/* <Input
-        placeholder="Dirección de la subasta"
-        defaultValue={formData.address}
-        onChange={(e) => onChange(e, "address")}
-        errorMessage={errorAddress}
-        rightIcon={{
-          type: "material-community",
-          name: "google-maps",
-          color: locationSubasta ? "#442484" : "#c2c2c2",
-          onPress: () => setIsVisibleMap(true),
-        }}
-      /> */}
       <Input
           placeholder="Descripción de la subasta"
           multiline

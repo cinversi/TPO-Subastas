@@ -57,7 +57,6 @@ export default function RecoverPassword({ navigation }) {
                     />
                 }
             />
-
             <Button
                 title="Generar Contraseña"
                 containerStyle={styles.bntContainer}

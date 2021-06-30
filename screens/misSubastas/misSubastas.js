@@ -6,16 +6,15 @@ import { size } from 'lodash'
 import firebase from 'firebase/app'
 
 import Loading from '../../components/Loading'
-import ListSubastas from '../../components/subastas/ListSubastas'
-import { getCurrentUser, getMoreMisSubastas, getMisSubastas } from '../../utils/actions'
-
+import ListMisSubastas from '../../components/misSubastas/ListMisSubastas'
+import { getCurrentUser, getDocumentById, getMoreMisSubastas, getMisSubastas } from '../../utils/actions'
 
 export default function Subastas({ navigation }) {
     const [user, setUser] = useState(null)
     const [startSubasta, setStartSubasta] = useState(null)
     const [subastas, setSubastas] = useState([])
     const [loading, setLoading] = useState(false)
-
+    const [userIsAdmin, setUserIsAdmin] = useState(false)
     const limitSubastas = 7
 
     useEffect(() => {
@@ -23,6 +22,18 @@ export default function Subastas({ navigation }) {
             userInfo ? setUser(true) : setUser(false)
         })
     }, [])
+
+    useFocusEffect(
+        useCallback(() => {
+            async function getData() {
+                const response = await getDocumentById("users", getCurrentUser().uid)
+                if(response.document.role === 'admin'){
+                    setUserIsAdmin(true)
+                }
+            }
+            getData()
+        }, [])
+    )
 
     useFocusEffect(
         useCallback(() => {
@@ -58,11 +69,16 @@ export default function Subastas({ navigation }) {
         return <Loading isVisible={true} text="Cargando..."/>
     }
 
+    /*const userIsAdmin = getCurrentUser().isAdmin;
+   {userIsAdmin ? (
+      ) : null}*/
+
     return (
         <View style={styles.viewBody}>
+            
             {
                 size(subastas) > 0 ? (
-                    <ListSubastas
+                    <ListMisSubastas
                         subastas={subastas}
                         navigation={navigation}
                         handleLoadMore={handleLoadMore}

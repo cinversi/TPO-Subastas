@@ -6,7 +6,6 @@ import { size } from 'lodash'
 import firebase from 'firebase/app'
 
 import Loading from '../../components/Loading'
-import ListItems from '../../components/subastas/ListItems'
 import { getMoreItemsCatalogo, getItemsCatalogo } from '../../utils/actions'
 
 

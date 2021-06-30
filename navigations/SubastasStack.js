@@ -2,7 +2,6 @@ import React from 'react'
 import { createStackNavigator } from '@react-navigation/stack'
 
 import Subastas from '../screens/subastas/Subastas'
-import AddSubasta from '../screens/subastas/AddSubasta'
 import Subasta from '../screens/subastas/Subasta'
 import AddPujasSubasta from '../screens/subastas/AddPujasSubasta'
 

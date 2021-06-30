@@ -4,7 +4,6 @@ import { createStackNavigator } from '@react-navigation/stack'
 import misSubastas from '../screens/misSubastas/misSubastas'
 import AddSubasta from '../screens/subastas/AddSubasta'
 import miSubasta from '../screens/misSubastas/miSubasta'
-import AddPujasSubasta from '../screens/subastas/AddPujasSubasta'
 
 const Stack = createStackNavigator()
 

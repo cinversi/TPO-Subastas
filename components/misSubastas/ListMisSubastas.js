@@ -2,7 +2,7 @@ import React from 'react'
 import { ActivityIndicator, FlatList, StyleSheet, Text, View, TouchableOpacity } from 'react-native'
 import { Image } from 'react-native-elements'
 
-export default function ListSubastas({ subastas, navigation, handleLoadMore }) {
+export default function ListMisSubastas({ subastas, navigation, handleLoadMore }) {
     return (
         <View>
             <FlatList
@@ -19,11 +19,11 @@ export default function ListSubastas({ subastas, navigation, handleLoadMore }) {
 }
 
 function Subasta({ subasta, navigation, handleLoadMore }) {
-    const { id, images, name, address, categoria, fechaSubastar } = subasta.item
+    const { id, images, name, address, categoria, fechaSubastar,statusSubasta } = subasta.item
     const imageSubasta = images[0]
 
     const goSubasta = () => {
-        navigation.navigate("subasta", { id, name })
+        navigation.navigate("miSubasta", { id, name })
     } 
 
     return (
@@ -39,9 +39,9 @@ function Subasta({ subasta, navigation, handleLoadMore }) {
                 </View>
                 <View>
                     <Text style={styles.subastaTitle}>{name}</Text>
-                    <Text style={styles.subastaInformation}>{address}</Text>
                     <Text style={styles.subastaInformation}>Categoría: {categoria}</Text>
                     <Text style={styles.subastaInformation}>Fecha: {fechaSubastar}</Text>
+                    <Text style={styles.subastaInformation}>Estado: {statusSubasta}</Text>
                 </View>
             </View>
         </TouchableOpacity>

@@ -578,3 +578,55 @@ export const getMoreMisSubastas = async(limitSubastas, startSubasta) => {
     }
     return result     
 }
+
+
+///////////////////////////////////////////////////////7
+
+export const getMisSubastasAdmin = async(limitSubastas) => {
+    const result = { statusResponse: true, error: null, subastas: [], startSubasta: null }
+    try {
+        const response = await db
+            .collection("subastas")
+            .where("statusSubasta", "==", 'pending')
+            //.orderBy("createAt", "desc")
+            .limit(limitSubastas)
+            .get()
+        if (response.docs.length > 0) {
+            result.startSubasta = response.docs[response.docs.length - 1]
+        }
+        response.forEach((doc) => {
+            const subasta = doc.data()
+            subasta.id = doc.id
+            result.subastas.push(subasta)
+        })
+    } catch (error) {
+        result.statusResponse = false
+        result.error = error
+    }
+    return result     
+}
+
+export const getMoreMisSubastasAdmin = async(limitSubastas, startSubasta) => {
+    const result = { statusResponse: true, error: null, subastas: [], startSubasta: null }
+    try {
+        const response = await db
+            .collection("subastas")
+            .where("statusSubasta", "==", 'pending')
+            //.orderBy("createAt", "desc")
+            .startAfter(startSubasta.data().createAt)
+            .limit(limitSubastas)
+            .get()
+        if (response.docs.length > 0) {
+            result.startSubasta = response.docs[response.docs.length - 1]
+        }
+        response.forEach((doc) => {
+            const subasta = doc.data()
+            subasta.id = doc.id
+            result.subastas.push(subasta)
+        })
+    } catch (error) {
+        result.statusResponse = false
+        result.error = error
+    }
+    return result     
+}
