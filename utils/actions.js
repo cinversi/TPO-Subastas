@@ -579,25 +579,22 @@ export const getMoreMisSubastas = async(limitSubastas, startSubasta) => {
     return result     
 }
 
-
-///////////////////////////////////////////////////////7
-
 export const getMisSubastasAdmin = async(limitSubastas) => {
-    const result = { statusResponse: true, error: null, subastas: [], startSubasta: null }
+    const result = { statusResponse: true, error: null, subastasAdmin: [], startSubastaAdmin: null }
     try {
         const response = await db
             .collection("subastas")
-            .where("statusSubasta", "==", 'pending')
+            .where("statusSubasta", "==", "pending")
             //.orderBy("createAt", "desc")
             .limit(limitSubastas)
             .get()
         if (response.docs.length > 0) {
-            result.startSubasta = response.docs[response.docs.length - 1]
+            result.startSubastaAdmin = response.docs[response.docs.length - 1]
         }
         response.forEach((doc) => {
             const subasta = doc.data()
             subasta.id = doc.id
-            result.subastas.push(subasta)
+            result.subastasAdmin.push(subasta)
         })
     } catch (error) {
         result.statusResponse = false
@@ -611,7 +608,7 @@ export const getMoreMisSubastasAdmin = async(limitSubastas, startSubasta) => {
     try {
         const response = await db
             .collection("subastas")
-            .where("statusSubasta", "==", 'pending')
+            .where("statusSubasta", "==", "pending")
             //.orderBy("createAt", "desc")
             .startAfter(startSubasta.data().createAt)
             .limit(limitSubastas)
@@ -629,4 +626,15 @@ export const getMoreMisSubastasAdmin = async(limitSubastas, startSubasta) => {
         result.error = error
     }
     return result     
+}
+
+export const addMoreInfoSubasta = async(idSubasta,precioBase, fechaSubastar, horaSubastar,horaFinSubasta) => {
+    const result = { statusResponse: true, error: null }
+    try {
+        db.collection("subastas").doc(idSubasta).update({precioBase:precioBase, fechaSubastar: fechaSubastar,horaSubastar:horaSubastar,horaFinSubasta:horaFinSubasta,statusSubasta:"available"})
+     } catch (error) {
+        result.statusResponse = false
+        result.error = error
+    }
+    return result   
 }

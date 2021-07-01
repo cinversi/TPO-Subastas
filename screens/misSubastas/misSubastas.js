@@ -7,7 +7,9 @@ import firebase from 'firebase/app'
 
 import Loading from '../../components/Loading'
 import ListMisSubastas from '../../components/misSubastas/ListMisSubastas'
-import { getCurrentUser, getDocumentById, getMoreMisSubastas, getMisSubastas } from '../../utils/actions'
+import ListMisSubastasAdmin from '../../components/misSubastasAdmin/ListMisSubastasAdmin'
+
+import { getCurrentUser, getDocumentById, getMoreMisSubastas, getMisSubastas, getMisSubastasAdmin, getMoreMisSubastasAdmin } from '../../utils/actions'
 
 export default function Subastas({ navigation }) {
     const [user, setUser] = useState(null)
@@ -15,7 +17,14 @@ export default function Subastas({ navigation }) {
     const [subastas, setSubastas] = useState([])
     const [loading, setLoading] = useState(false)
     const [userIsAdmin, setUserIsAdmin] = useState(false)
+    const [startSubastaAdmin, setStartSubastaAdmin] = useState(null)
+    const[subastasAdmin,setSubastasAdmin] = useState([])
     const limitSubastas = 7
+    const limitSubastasAdmin = 7
+
+    const clearErrors = () => {
+        setUserIsAdmin(false)
+    }
 
     useEffect(() => {
         firebase.auth().onAuthStateChanged((userInfo) => {
@@ -26,6 +35,7 @@ export default function Subastas({ navigation }) {
     useFocusEffect(
         useCallback(() => {
             async function getData() {
+                clearErrors()
                 const response = await getDocumentById("users", getCurrentUser().uid)
                 if(response.document.role === 'admin'){
                     setUserIsAdmin(true)
@@ -65,44 +75,102 @@ export default function Subastas({ navigation }) {
         setLoading(false)
     }
 
+
+    useFocusEffect(
+        useCallback(() => {
+            async function getDataAdmin() {
+                setLoading(true)
+                const result = await getMisSubastasAdmin(limitSubastasAdmin)
+                if (result.statusResponse) {
+                    setStartSubastaAdmin(result.startSubastaAdmin)
+                    setSubastasAdmin(result.subastasAdmin)
+                }
+                setLoading(false)
+            }
+            getDataAdmin()
+        }, [])
+    )
+    
+    const handleLoadMoreAdmin = async() => {
+        if (!startSubastaAdmin) {
+            return
+        }
+    
+        setLoading(true)
+        const uid = getCurrentUser().uid
+        const result = await getMoreMisSubastasAdmin(limitSubastasAdmin, startSubastaAdmin,uid)
+        if (result.btnContainerstatusResponse) {
+            setStartSubastaAdmin(result.startSubastaAdmin)
+            setSubastasAdmin([...subastasAdmin, ...response.subastasAdmin])
+        }
+        setLoading(false)
+    }
+
+
     if (user === null) {
         return <Loading isVisible={true} text="Cargando..."/>
     }
 
-    /*const userIsAdmin = getCurrentUser().isAdmin;
-   {userIsAdmin ? (
-      ) : null}*/
-
     return (
-        <View style={styles.viewBody}>
-            
-            {
-                size(subastas) > 0 ? (
-                    <ListMisSubastas
-                        subastas={subastas}
-                        navigation={navigation}
-                        handleLoadMore={handleLoadMore}
-                    />
-                ) : (
-                    <View style={styles.notFoundView}>
-                        <Text style={styles.notFoundText}>No hay subastas registradas.</Text>
-                    </View>
-                )
-            }
-            {
-                user && (
-                    <Icon
-                        type="material-community"
-                        name="plus"
-                        color="#442484"
-                        reverse
-                        containerStyle={styles.btnContainer}
-                        onPress={() => navigation.navigate("add-subasta")}
-                    />
-                )
-            }
-            <Loading isVisible={loading} text="Cargando subastas..."/>
-        </View>
+        userIsAdmin ? (
+                <View style={styles.viewBody}>
+                {
+                    size(subastasAdmin) > 0 ? (
+                        <ListMisSubastasAdmin
+                            subastas={subastasAdmin}
+                            navigation={navigation}
+                            handleLoadMore={handleLoadMoreAdmin}
+                        />
+                    ) : (
+                        <View style={styles.notFoundView}>
+                            <Text style={styles.notFoundText}>No hay subastas cargadas para evaluar</Text>
+                        </View>
+                    )
+                }
+                {
+                    user && (
+                        <Icon
+                            type="material-community"
+                            name="plus"
+                            color="#442484"
+                            reverse
+                            containerStyle={styles.btnContainer}
+                            onPress={() => navigation.navigate("add-subasta")}
+                        />
+                    )
+                }
+                <Loading isVisible={loading} text="Cargando subastas..."/>
+            </View>
+        ):(
+            <View style={styles.viewBody}>
+                {
+                    size(subastas) > 0 ? (
+                        <ListMisSubastas
+                            subastas={subastas}
+                            navigation={navigation}
+                            handleLoadMore={handleLoadMore}
+                        />
+                    ) : (
+                        <View style={styles.notFoundView}>
+                            <Text style={styles.notFoundText}>No hay subastas registradas.</Text>
+                        </View>
+                    )
+                }
+                {
+                    user && (
+                        <Icon
+                            type="material-community"
+                            name="plus"
+                            color="#442484"
+                            reverse
+                            containerStyle={styles.btnContainer}
+                            onPress={() => navigation.navigate("add-subasta")}
+                        />
+                    )
+                }
+                <Loading isVisible={loading} text="Cargando subastas..."/>
+            </View>
+        )
     )
 }
 
