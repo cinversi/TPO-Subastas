@@ -1,8 +1,8 @@
-import React, { useState, useCallback, useRef, useEffect } from 'react'
+import React, { useState, useCallback, useRef } from 'react'
 import { View } from 'react-native'
 import { Alert, Dimensions, StyleSheet, Text, ScrollView } from 'react-native'
-import { ListItem, Icon, Input, Button } from 'react-native-elements'
-import { isEmpty, size} from 'lodash'
+import { ListItem, Button } from 'react-native-elements'
+import { size } from 'lodash'
 import { useFocusEffect } from '@react-navigation/native'
 import firebase from 'firebase/app'
 import Toast from 'react-native-easy-toast'
@@ -75,16 +75,6 @@ export default function miSubastaAdmin({ navigation, route }) {
         clearErrors()
         let isValid = true
  
-        // if (isEmpty(formData.precioBase)) {
-        // setErrorPrecioBase("Debes ingresar un precio base de la subasta.");
-        // isValid = false;
-        // }
-
-        // if (isNaN(formData.precioBase)) {
-        // setErrorPrecioBase("Debes ingresar un precio base válido.");
-        // isValid = false;
-        // }
-
         return isValid
     }
  
@@ -134,26 +124,6 @@ export default function miSubastaAdmin({ navigation, route }) {
     const hora = hour + ":" + minutes;
     setHoraFinSubasta(hora);
   }
-
-//   const calcularCategoria = (precioB) => {
-//     let p = "";
-//     if (precioB < 10000) {
-//       p = "COMUN";
-//       return p;
-//     } else if (precioB < 50000) {
-//       p = "ESPECIAL";
-//       return p;
-//     } else if (precioB < 100000) {
-//       p = "PLATA";
-//       return p;
-//     } else if (precioB <= 500000) {
-//       p = "ORO";
-//       return p;
-//     } else if (precioB > 500000) {
-//       p = "PLATINO";
-//       return p;
-//     }
-//   };
 
     const clearErrors = () => {
         setFecha(null)

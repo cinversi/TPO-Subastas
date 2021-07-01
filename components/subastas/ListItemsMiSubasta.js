@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from 'react'
+import React, { useState } from 'react'
 import { FlatList, StyleSheet, Text, View, TouchableOpacity } from 'react-native'
 import firebase from 'firebase/app'
 
@@ -22,7 +22,7 @@ export default function ListItemsMiSubasta({ catItems, id, navigation, handleLoa
     )
 }
 
-function CatItem({ catItem,id, navigation }) {
+function CatItem({ catItem, navigation }) {
     const [userLogged, setUserLogged] = useState(false)
     const { itemUuid, nombreItem, descripcion, cantidad } = catItem.item
 

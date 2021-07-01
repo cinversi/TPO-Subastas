@@ -1,10 +1,7 @@
-import React, { useState, useCallback } from 'react'
+import React, { useState } from 'react'
 import { FlatList, StyleSheet, Text, View, TouchableOpacity } from 'react-native'
 import { Button } from 'react-native-elements'
-import { useFocusEffect } from '@react-navigation/native'
 import firebase from 'firebase/app'
-import {size} from 'lodash'
-
 
 export default function ListItems({ catItems, id, navigation, handleLoadMore }) {
 

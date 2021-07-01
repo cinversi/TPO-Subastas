@@ -8,33 +8,6 @@ import ChangePrecioBaseForm from '../../components/subastas/ChangePrecioBaseForm
 import Loading from '../../components/Loading'
 
 export default function ListItemsMiSubastaAdmin({ catItems, id, navigation, handleLoadMore }) {
-    // const [formData, setFormData] = useState(defaultFormValues());
-    // const [errorPrecioBase, setErrorPrecioBase] = useState(null);
-    // const validForm = () => {
-    //     clearErrors()
-    //     let isValid = true
- 
-    //     if (isEmpty(formData.precioBase)) {
-    //     setErrorPrecioBase("Debes ingresar un precio base de la subasta.");
-    //     isValid = false;
-    //     }
-
-    //     if (isNaN(formData.precioBase)) {
-    //     setErrorPrecioBase("Debes ingresar un precio base válido.");
-    //     isValid = false;
-    //     }
-
-    //     return isValid
-    // }
-
-    // const clearErrors = () => {
-    //     setErrorPrecioBase(null)
-    //     setFecha(null)
-    //     setHora(null)
-    //     setHoraFinSubasta(null)
-    //     setHourPickerVisibility(false)
-    //     setDatePickerVisibility(false)
-    // }
     
     return (
         <View>
@@ -64,7 +37,6 @@ function CatItem({ catItem,id, navigation }) {
     const [loading, setLoading] = useState(false)
     const [loadingText, setLoadingText] = useState("")
     
-    console.log("dentro de la funcion",id)
     const toggleModal = () => {
         setModalVisible(!isModalVisible);
     };
@@ -77,7 +49,27 @@ function CatItem({ catItem,id, navigation }) {
         user ? setUserLogged(true) : setUserLogged(false)
     })
 
-    console.log("uuid dentro de listenitems",itemUuid)
+    
+//   const calcularCategoria = (precioB) => {
+//     let p = "";
+//     if (precioB < 10000) {
+//       p = "COMUN";
+//       return p;
+//     } else if (precioB < 50000) {
+//       p = "ESPECIAL";
+//       return p;
+//     } else if (precioB < 100000) {
+//       p = "PLATA";
+//       return p;
+//     } else if (precioB <= 500000) {
+//       p = "ORO";
+//       return p;
+//     } else if (precioB > 500000) {
+//       p = "PLATINO";
+//       return p;
+//     }
+//   };
+
     return (
         <TouchableOpacity onPress={goCatItem}>
             <View style={styles.viewCatitem}>
@@ -122,37 +114,6 @@ function CatItem({ catItem,id, navigation }) {
         </TouchableOpacity>
     )
 }
-
-// function FormAdd({
-//     formData,
-//     setFormData,
-//     errorPrecioBase,
-//   }) {
-//     const onChange = (e, type) => {
-//       setFormData({ ...formData, [type]: e.nativeEvent.text });
-//     };
-  
-//     return (
-//       <View style={styles.viewForm}>
-//         <Text style={styles.CompletarTitle}>Completar los siguientes campos: </Text>
-//         {
-//                 <Input
-//                     placeholder="$ Ingresar aqui Precio base"
-//                     containerStyle={styles.inputPrecioBase}
-//                     defaultValue={formData.precioBase}
-//                     onChange={(e) => onChange(e, "precioBase")}
-//                     errorMessage={errorPrecioBase}
-//                 />
-//         }
-//       </View>
-//     );
-//   }
-
-//   const defaultFormValues = () => {
-//     return {
-//       precioBase: ""
-//     };
-//   };
 
 const styles = StyleSheet.create({
     viewCatitem: {

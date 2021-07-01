@@ -16,10 +16,6 @@ export default function ChangeDireccionForm({ id,itemUuid, precioBase, setModalV
         }
 
         setLoading(true)
-        console.log("precio base dentro de change",newPrecioBase)
-        console.log("id dentro de change",id)
-        console.log("itemUuid dentro de change",itemUuid)
-
         const result = await updatePrecioBase(id,itemUuid,newPrecioBase)  
         setLoading(false)
 
