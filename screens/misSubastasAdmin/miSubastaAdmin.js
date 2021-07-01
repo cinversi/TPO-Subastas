@@ -190,6 +190,7 @@ export default function miSubastaAdmin({ navigation, route }) {
                 size(catItems) > 0 ? (
                     <ListItemsMiSubastaAdmin
                         catItems={catItems}
+                        id={id}
                         navigation={navigation}
                         handleLoadMore={() => {}}
                     />
@@ -265,7 +266,7 @@ function FormAdd({
                     onChange={(e) => onChange(e, "precioBase")}
                     errorMessage={errorPrecioBase}
                 />
-            }
+        }
       </View>
     );
   }
@@ -275,7 +276,7 @@ function FormAdd({
       precioBase: ""
     };
   };
-  
+
 function TitleSubasta({ name, description, categoria }) {
     return (
         <View style={styles.viewSubastaTitle}>

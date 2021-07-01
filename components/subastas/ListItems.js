@@ -28,7 +28,7 @@ export default function ListItems({ catItems, id, navigation, handleLoadMore }) 
 
 function CatItem({ catItem,id, navigation }) {
     const [userLogged, setUserLogged] = useState(false)
-    const { uuid, nombreItem, descripcion, cantidad } = catItem.item
+    const { itemUuid, nombreItem, descripcion, cantidad } = catItem.item
     const [listadoPujas, setListadoPujas] = catItem.item.listadoPujas
     //console.log("adentor de la funcion:",listadoPujas)
 
@@ -40,7 +40,7 @@ function CatItem({ catItem,id, navigation }) {
 
     
     const goCatItem = () => {
-        navigation.navigate("catItem", { uuid, nombreItem })
+        navigation.navigate("catItem", { nombreItem,descripcion,itemUuid })
     } 
 
     firebase.auth().onAuthStateChanged((user) => {
@@ -59,7 +59,7 @@ function CatItem({ catItem,id, navigation }) {
                             <Button
                                 buttonStyle={styles.btnAddPayment}
                                 title="Ver precio"
-                                onPress={() => navigation.navigate("add-pujas-subasta", { id,uuid,listadoPujas })}
+                                onPress={() => navigation.navigate("add-pujas-subasta", { id,catItem  })}
                             />
                         ) : (
                             <Text 

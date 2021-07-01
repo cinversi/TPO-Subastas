@@ -1,50 +1,71 @@
-import React, { useState, useRef,useCallback } from 'react'
-import { StyleSheet, Text, View,FlatList } from 'react-native'
+import React, { useState, useRef,useCallback,useEffect} from 'react'
+import { StyleSheet, Text, View,FlatList,Animated} from 'react-native'
 import { Button, Input } from 'react-native-elements'
 import { useFocusEffect } from '@react-navigation/native'
 import Toast from 'react-native-easy-toast'
 import { isEmpty,size } from 'lodash'
-import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'
  
 import Loading from '../../components/Loading'
-import { addDocumentWithoutId, getCurrentUser, getDocumentById, updateDocument, addNewPuja,} from '../../utils/actions'
+import { addDocumentWithoutId, getCurrentUser, getDocumentById, updateDocument, addNewPuja, getSubastas,addSubastaFinalizada} from '../../utils/actions'
+import CountDown from 'react-native-countdown-component';
+import moment from 'moment';
+ 
+ 
  
 export default function AddPujasSubasta({ navigation, route }) {
-    const { id,uuid,listadoPujas } = route.params
-    const toastRef = useRef()
- 
-    const [title, setTitle] = useState("")
-    const [errorTitle, setErrorTitle] = useState(null)
+    const { id,catItem } = route.params
+    const toastRef = useRef() 
     const [valorUltimaPuja, setValorUltimaPuja] = useState(null)
     const [nombreUltimoPujador, setNombreUltimoPujador] = useState(null)
     const [diaHoraUltimoPuja, setDiaHoraUltimoPuja] = useState(null)
     const [puja,setPuja] = useState(null)
-    const [errorReview, setErrorReview] = useState(null)
+    const [errorPuja,setErrorPuja]=useState(null)
     const [loading, setLoading] = useState(false)
-    const [subasta, setSubasta] = useState(null)
-    const [errorPuja,setErrorPuja] = useState(null)
-    //const [listadoPujas, setListadoPujas] = useState([{key: '',nombrePujador: '',valorPujado: ''}])
  
-    // useFocusEffect(
-    //     useCallback(() => {
-    //         async function getData() {
-    //             const responseGetSubasta = await getDocumentById("subastas", id)
-    //             setSubasta(responseGetSubasta.document)
-    //         }
-    //         getData()
-    //     }, [])
-    // )
-
-    console.log("aca estamos en addpujas subasta", listadoPujas)
+    const [totalDuration, setTotalDuration] = useState(0);
+ 
+    useEffect(() => {
+      // Coundown timer for a given expiry date-time
+      let date = 
+        moment()
+          .utcOffset('-3:00')
+          .format('YYYY-MM-DD hh:mm:ss');
+          
+      
+      // Getting the current date-time
+      // You can set your own date-time
+      let expirydate = '2021-08-01 00:00:00';
+      
+      let diffr = 
+        moment
+          .duration(moment(expirydate)
+          .diff(moment(date)));
+      // Difference of the expiry date-time
+      var hours = parseInt(diffr.asHours());
+      var minutes = parseInt(diffr.minutes());
+      var seconds = parseInt(diffr.seconds());
+  
+      // Converting in seconds
+      var d = hours * 60 * 60 + minutes * 60 + seconds;
+  
+      // Settign up the duration of countdown
+      setTotalDuration(d);
+ 
+      console.log(date,expirydate,diffr,d)
+    }, []);
+ 
  
     useFocusEffect(
         useCallback(() => {
             async function getUltimaPuja() {
                 setLoading(true)
-                const response = await getDocumentById("subastas", id,uuid)
-                if ((size(response.document.listadoPujas))>1){                                   
+                //Caso más de una puja
+                const response = await getDocumentById("subastas",id)
+                //getPujas.document.listadoPujas.forEach(element => console.log(element))   
+ 
+                  if ((size(response.document.listadoPujas))>1){                                   
                     const ultimoValorPujado=response.document.listadoPujas[(size(response.document.listadoPujas))-1].valorPujado
-                    const ultimoNombrePujador=response.document.listadoPujas[(size(response.document.listadoPujas))-1].nombrePujador
+                    const ultimoNombrePujador=response.document.listadoPujas[(size(response.document.listadoPujas))-1].datosPujador
                     const fecha1=new Date((response.document.listadoPujas[(size(response.document.listadoPujas))-1].horarioPuja.seconds)*1000)
                     const diaPuja=fecha1.toLocaleDateString("es-AR")
                     var time_to_show = response.document.listadoPujas[(size(response.document.listadoPujas))-1].horarioPuja.seconds; // unix timestamp in seconds
@@ -73,6 +94,7 @@ export default function AddPujasSubasta({ navigation, route }) {
             getUltimaPuja()
         }, [])
     )
+ 
     
     const addPuja = async() => {
         if (!validForm()) {
@@ -80,7 +102,7 @@ export default function AddPujasSubasta({ navigation, route }) {
         }
         setLoading(true)
         const horarioPuja=new Date()
-        const responseAddPuja = await addNewPuja(id,puja,getCurrentUser().uid,horarioPuja )
+        const responseAddPuja = await addNewPuja(id,catItem.item.itemUuid,puja,getCurrentUser().uid,horarioPuja )
         if (!responseAddPuja.statusResponse) {
             setLoading(false)
             toastRef.current.show("Error al realizar puja", 3000)
@@ -115,11 +137,6 @@ export default function AddPujasSubasta({ navigation, route }) {
             setErrorPuja("El monto ingresado no debe exceder al 20% del valor de la misma.")
             isValid = false 
         }
-        // if(valorLimit<50)
-        // {
-        //     setErrorPuja("Debes ingresar un monto menor al 25% de la última puja")
-        //     isValid = false 
-        // }
  
         if(isNaN(puja)){
             setErrorPuja("Debes ingresar un valor numerico para pujar.")
@@ -138,17 +155,42 @@ export default function AddPujasSubasta({ navigation, route }) {
         setErrorPuja(null)
     }
  
-    if (subasta === null) {
+    if (catItem === null) {
         return <Loading isVisible={true} text="Cargando..."/>
     }
  
+ 
+    const guardarSubastaFinalizada = async() => {
+        const listadoPujas=response.document.listadoPujas
+        const responseAddSubastaFinalizada= await addSubastaFinalizada(id,catItem.item.itemUuid,nombreUltimoPujador,valorUltimaPuja,getCurrentUser().uid,diaHoraUltimoPuja,listadoPujas)
+        if (!responseAddSubastaFinalizada.statusResponse) {
+            setLoading(false)
+            toastRef.current.show("Error al finalizar subasta", 3000)
+            return
+        }
+        navigation.navigate("subastas") 
+    } 
+ 
+ 
+ 
+ 
     return (
         <View style={styles.viewBody}>
-            <View>
-                <Text style={styles.viewInfo}>{subasta.name}</Text>
-                <Text style={styles.viewInfoHora}>Hora de Finalización: {subasta.horaFinSubasta}hs</Text>
+            <View>     
+                <CountDown
+                    until={totalDuration}
+                    //duration of countdown in seconds
+                    timetoShow={('H', 'M', 'S')}
+                    //formate to show
+                    onFinish={() => alert('finished')}
+                    //on Finish call
+                    onPress={() => alert('hello')}
+                    //on Press call
+                    size={20}
+                />
+                <Text style={styles.viewInfo}>{catItem.name}</Text>
                 <Text style={styles.viewPrecioBaseText}>Precio base</Text> 
-                <Text style={styles.viewPrecioBase}>${subasta.precioBase}</Text>
+                {/* <Text style={styles.viewPrecioBase}>${catItem.precioBase}</Text> */}
                 <Text style={styles.viewPrecioActualText}>Precio actual</Text>
                 <Text style={styles.viewPrecioActual}>${valorUltimaPuja}</Text>
                 <Text style={styles.viewUltimasPujas}>Día y horario de última puja: {diaHoraUltimoPuja}</Text>

@@ -442,17 +442,6 @@ export const updateDireccion = async(newData) => {
     return result   
 }
 
-export const addNewPuja = async(idSubasta,puja,uidUsuario,horario) => {
-    const result = { statusResponse: true, error: null }
-    try {
-        db.collection("subastas").doc(idSubasta).update({listadoPujas:firebase.firestore.FieldValue.arrayUnion(...[{nombrePujador:uidUsuario,valorPujado:puja,horarioPuja:horario}])})
-     } catch (error) {
-        result.statusResponse = false
-        result.error = error
-    }
-    return result   
-}
-
 export const addNewPaymentMethod = async(idUser,number,expiry,cvc,name,postalCode,type) => {
     const result = { statusResponse: true, error: null }
     try {
@@ -637,4 +626,40 @@ export const addMoreInfoSubasta = async(idSubasta,precioBase, fechaSubastar, hor
         result.error = error
     }
     return result   
+}
+
+export const addNewPuja = async(idSubasta,uuid,puja,uidUsuario,horario) => {
+    const result = { statusResponse: true, error: null }
+    try {
+        // db.collection("subastas").doc(idSubasta).collection("catalogo").doc(nombreItem).update({listadoPujas:firebase.firestore.FieldValue.arrayUnion(...[{nombrePujador:uidUsuario,valorPujado:puja,horarioPuja:horario}])})
+        db.collection("subastas").doc(idSubasta).update({listadoPujas:firebase.firestore.FieldValue.arrayUnion(...[{uuidItem:uuid,valorPujado:puja,datosPujador:uidUsuario,horarioPuja:horario}])})
+        console.log(result)
+     } catch (error) {
+        result.statusResponse = false
+        result.error = error
+        console.log(result)
+    }
+    return result   
+}
+
+export const addSubastaFinalizada = async(idSubasta,itemUuid,nombreUltimoPujador,valorUltimaPuja,idUsuario,diaHoraUltimoPuja,listadoPujas) => {
+    const result = { statusResponse: true, error: null }
+    try {
+        await db.collection("subastasFinalizadas").add(idSubasta,itemUuid,nombreUltimoPujador,valorUltimaPuja,idUsuario,diaHoraUltimoPuja,listadoPujas)
+    } catch (error) {
+        result.statusResponse = false
+        result.error = error
+    }
+    return result     
+}
+
+export const updatePrecioBase = async(idSubasta, uuid, precioBase) => {
+    const result = { statusResponse: true, error: null }
+    try {
+        db.collection("subastas").doc(idSubasta).update({preciosBase:firebase.firestore.FieldValue.arrayUnion(...[{uuidItem:uuid, precioBase:precioBase}])})
+    } catch (error) {
+        result.statusResponse = false
+        result.error = error
+    }
+    return result
 }
