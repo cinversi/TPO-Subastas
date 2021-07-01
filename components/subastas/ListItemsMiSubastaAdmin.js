@@ -56,7 +56,7 @@ export default function ListItemsMiSubastaAdmin({ catItems, id, navigation, hand
 
 function CatItem({ catItem,id, navigation }) {
     const [userLogged, setUserLogged] = useState(false)
-    const { uuid, nombreItem, descripcion, cantidad } = catItem.item
+    const { itemUuid, nombreItem, descripcion, cantidad } = catItem.item
     const [isModalVisible, setModalVisible] = useState(false);
     const [precioBase, setPrecioBase] = useState(null);
 
@@ -69,23 +69,15 @@ function CatItem({ catItem,id, navigation }) {
         setModalVisible(!isModalVisible);
     };
 
-    //console.log("adentor de la funcion:",listadoPujas)
-
-
-    // for (let key in listadoPujas) {
-    //     console.log(key,listadoPujas["horarioPuja"]);
-    //     //console.log(listadoPujas[0])
-    //   }
-
-    
     const goCatItem = () => {
-        navigation.navigate("catItem", { uuid, nombreItem })
+        navigation.navigate("catItem", { itemUuid, nombreItem })
     } 
 
     firebase.auth().onAuthStateChanged((user) => {
         user ? setUserLogged(true) : setUserLogged(false)
     })
 
+    console.log("uuid dentro de listenitems",itemUuid)
     return (
         <TouchableOpacity onPress={goCatItem}>
             <View style={styles.viewCatitem}>
@@ -104,7 +96,7 @@ function CatItem({ catItem,id, navigation }) {
                                 <Modal isVisible={isModalVisible}>
                                     <ChangePrecioBaseForm
                                         id={id}
-                                        uuid={uuid}
+                                        itemUuid={itemUuid}
                                         precioBase={precioBase}
                                         setModalVisible={setModalVisible}
                                         toastRef={toastRef}

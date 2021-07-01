@@ -5,7 +5,7 @@ import { isEmpty } from 'lodash'
 
 import { updatePrecioBase } from '../../utils/actions'
 
-export default function ChangeDireccionForm({ id,uuid, precioBase, setModalVisible, toastRef}) {
+export default function ChangeDireccionForm({ id,itemUuid, precioBase, setModalVisible, toastRef}) {
     const [newPrecioBase, setNewPrecioBase] = useState(null)
     const [error, setError] = useState(null)
     const [loading, setLoading] = useState(false)
@@ -16,7 +16,11 @@ export default function ChangeDireccionForm({ id,uuid, precioBase, setModalVisib
         }
 
         setLoading(true)
-        const result = await updatePrecioBase(id,uuid,newPrecioBase)  
+        console.log("precio base dentro de change",newPrecioBase)
+        console.log("id dentro de change",id)
+        console.log("itemUuid dentro de change",itemUuid)
+
+        const result = await updatePrecioBase(id,itemUuid,newPrecioBase)  
         setLoading(false)
 
         if (!result.statusResponse) {

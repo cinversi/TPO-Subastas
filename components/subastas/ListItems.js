@@ -29,15 +29,6 @@ export default function ListItems({ catItems, id, navigation, handleLoadMore }) 
 function CatItem({ catItem,id, navigation }) {
     const [userLogged, setUserLogged] = useState(false)
     const { itemUuid, nombreItem, descripcion, cantidad } = catItem.item
-    const [listadoPujas, setListadoPujas] = catItem.item.listadoPujas
-    //console.log("adentor de la funcion:",listadoPujas)
-
-
-    // for (let key in listadoPujas) {
-    //     console.log(key,listadoPujas["horarioPuja"]);
-    //     //console.log(listadoPujas[0])
-    //   }
-
     
     const goCatItem = () => {
         navigation.navigate("catItem", { nombreItem,descripcion,itemUuid })

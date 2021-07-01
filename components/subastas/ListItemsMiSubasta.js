@@ -1,10 +1,6 @@
 import React, { useState, useCallback } from 'react'
 import { FlatList, StyleSheet, Text, View, TouchableOpacity } from 'react-native'
-import { Button } from 'react-native-elements'
-import { useFocusEffect } from '@react-navigation/native'
 import firebase from 'firebase/app'
-import {size} from 'lodash'
-
 
 export default function ListItemsMiSubasta({ catItems, id, navigation, handleLoadMore }) {
 
@@ -28,19 +24,10 @@ export default function ListItemsMiSubasta({ catItems, id, navigation, handleLoa
 
 function CatItem({ catItem,id, navigation }) {
     const [userLogged, setUserLogged] = useState(false)
-    const { uuid, nombreItem, descripcion, cantidad } = catItem.item
-    const [listadoPujas, setListadoPujas] = catItem.item.listadoPujas
-    //console.log("adentor de la funcion:",listadoPujas)
+    const { itemUuid, nombreItem, descripcion, cantidad } = catItem.item
 
-
-    // for (let key in listadoPujas) {
-    //     console.log(key,listadoPujas["horarioPuja"]);
-    //     //console.log(listadoPujas[0])
-    //   }
-
-    
     const goCatItem = () => {
-        navigation.navigate("catItem", { uuid, nombreItem })
+        navigation.navigate("catItem", { itemUuid, nombreItem })
     } 
 
     firebase.auth().onAuthStateChanged((user) => {

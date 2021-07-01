@@ -617,10 +617,10 @@ export const getMoreMisSubastasAdmin = async(limitSubastas, startSubasta) => {
     return result     
 }
 
-export const addMoreInfoSubasta = async(idSubasta,precioBase, fechaSubastar, horaSubastar,horaFinSubasta) => {
+export const addMoreInfoSubasta = async(idSubasta, fechaSubastar, horaSubastar,horaFinSubasta) => {
     const result = { statusResponse: true, error: null }
     try {
-        db.collection("subastas").doc(idSubasta).update({precioBase:precioBase, fechaSubastar: fechaSubastar,horaSubastar:horaSubastar,horaFinSubasta:horaFinSubasta,statusSubasta:"available"})
+        db.collection("subastas").doc(idSubasta).update({fechaSubastar: fechaSubastar,horaSubastar:horaSubastar,horaFinSubasta:horaFinSubasta,statusSubasta:"available"})
      } catch (error) {
         result.statusResponse = false
         result.error = error
@@ -632,7 +632,7 @@ export const addNewPuja = async(idSubasta,uuid,puja,uidUsuario,horario) => {
     const result = { statusResponse: true, error: null }
     try {
         // db.collection("subastas").doc(idSubasta).collection("catalogo").doc(nombreItem).update({listadoPujas:firebase.firestore.FieldValue.arrayUnion(...[{nombrePujador:uidUsuario,valorPujado:puja,horarioPuja:horario}])})
-        db.collection("subastas").doc(idSubasta).update({listadoPujas:firebase.firestore.FieldValue.arrayUnion(...[{uuidItem:uuid,valorPujado:puja,datosPujador:uidUsuario,horarioPuja:horario}])})
+        db.collection("subastas").doc(idSubasta).update({listadoPujas:firebase.firestore.FieldValue.arrayUnion(...[{itemUuid:uuid,valorPujado:puja,datosPujador:uidUsuario,horarioPuja:horario}])})
         console.log(result)
      } catch (error) {
         result.statusResponse = false
@@ -653,13 +653,17 @@ export const addSubastaFinalizada = async(idSubasta,itemUuid,nombreUltimoPujador
     return result     
 }
 
-export const updatePrecioBase = async(idSubasta, uuid, precioBase) => {
+export const updatePrecioBase = async(idSubasta, itemUuid, precioBase) => {
     const result = { statusResponse: true, error: null }
     try {
-        db.collection("subastas").doc(idSubasta).update({preciosBase:firebase.firestore.FieldValue.arrayUnion(...[{uuidItem:uuid, precioBase:precioBase}])})
+        db.collection("subastas").doc(idSubasta).update({preciosBase:firebase.firestore.FieldValue.arrayUnion(...[{itemUuid:itemUuid, precioBase:precioBase}])})
+        console.log(idSubasta)
+        console.log(itemUuid)
+        console.log(precioBase)    
     } catch (error) {
         result.statusResponse = false
         result.error = error
     }
+    console.log(result)
     return result
 }

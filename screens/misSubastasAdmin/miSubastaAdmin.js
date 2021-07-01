@@ -19,21 +19,17 @@ const widthScreen = Dimensions.get("window").width
 export default function miSubastaAdmin({ navigation, route }) {
     const { id, name } = route.params
     const toastRef = useRef()
-    
     const [subasta, setSubasta] = useState(null)
     const [activeSlide, setActiveSlide] = useState(0)
     const [userLogged, setUserLogged] = useState(false)
     const [currentUser, setCurrentUser] = useState(null)
     const [loading, setLoading] = useState(false)
     const [catItems, setCatItems] = useState([])
-    const [precioBase, setPrecioBase] = useState(null);
-    const [errorPrecioBase, setErrorPrecioBase] = useState(null);
     const [fechaSubastar, setFecha] = useState(null);
     const [horaSubastar, setHora] = useState(null);
     const [horaFinSubasta, setHoraFinSubasta] = useState(null);
     const [isHourPickerVisible, setHourPickerVisibility] = useState(false);
     const [isDatePickerVisible, setDatePickerVisibility] = useState(false);
-    const [formData, setFormData] = useState(defaultFormValues());
 
     firebase.auth().onAuthStateChanged(user => {
         user ? setUserLogged(true) : setUserLogged(false)
@@ -66,7 +62,7 @@ export default function miSubastaAdmin({ navigation, route }) {
             return
         }
         setLoading(true)
-        const responseAddMoreInfo = await addMoreInfoSubasta(id,formData.precioBase, fechaSubastar, horaSubastar,horaFinSubasta)
+        const responseAddMoreInfo = await addMoreInfoSubasta(id, fechaSubastar, horaSubastar,horaFinSubasta)
         if (!responseAddMoreInfo.statusResponse) {
             setLoading(false)
             toastRef.current.show("Error al agregar los datos a la subasta", 3000)
@@ -79,15 +75,15 @@ export default function miSubastaAdmin({ navigation, route }) {
         clearErrors()
         let isValid = true
  
-        if (isEmpty(formData.precioBase)) {
-        setErrorPrecioBase("Debes ingresar un precio base de la subasta.");
-        isValid = false;
-        }
+        // if (isEmpty(formData.precioBase)) {
+        // setErrorPrecioBase("Debes ingresar un precio base de la subasta.");
+        // isValid = false;
+        // }
 
-        if (isNaN(formData.precioBase)) {
-        setErrorPrecioBase("Debes ingresar un precio base válido.");
-        isValid = false;
-        }
+        // if (isNaN(formData.precioBase)) {
+        // setErrorPrecioBase("Debes ingresar un precio base válido.");
+        // isValid = false;
+        // }
 
         return isValid
     }
@@ -160,7 +156,6 @@ export default function miSubastaAdmin({ navigation, route }) {
 //   };
 
     const clearErrors = () => {
-        setErrorPrecioBase(null)
         setFecha(null)
         setHora(null)
         setHoraFinSubasta(null)
@@ -200,11 +195,11 @@ export default function miSubastaAdmin({ navigation, route }) {
                     </View>
                 )
             }
-            <FormAdd
-                formData={formData}
-                setFormData={setFormData}
-                errorPrecioBase={errorPrecioBase}
-            />
+            <View style={styles.viewForm}>
+            <Text style={styles.CompletarTitle}>Completar los siguientes campos: </Text>
+            <Text>   Se deben completar los siguientes campos para</Text>
+            <Text>   proceder a la activación de la subasta: </Text>
+            </View>
             <View>
                     <Button
                     title="Ingresar Fecha y Hora de Inicio"
@@ -243,39 +238,6 @@ export default function miSubastaAdmin({ navigation, route }) {
         </ScrollView>
     )
 }
-
-function FormAdd({
-    formData,
-    setFormData,
-    errorPrecioBase,
-  }) {
-    const onChange = (e, type) => {
-      setFormData({ ...formData, [type]: e.nativeEvent.text });
-    };
-  
-    return (
-      <View style={styles.viewForm}>
-        <Text style={styles.CompletarTitle}>Completar los siguientes campos: </Text>
-        <Text>   Se deben completar los siguientes campos para</Text>
-        <Text>   proceder a la activación de la subasta: </Text>
-        {
-                <Input
-                    placeholder="$ Ingresar aqui Precio base"
-                    containerStyle={styles.inputPrecioBase}
-                    defaultValue={formData.precioBase}
-                    onChange={(e) => onChange(e, "precioBase")}
-                    errorMessage={errorPrecioBase}
-                />
-        }
-      </View>
-    );
-  }
-
-  const defaultFormValues = () => {
-    return {
-      precioBase: ""
-    };
-  };
 
 function TitleSubasta({ name, description, categoria }) {
     return (
