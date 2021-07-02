@@ -133,7 +133,7 @@ export const getSubastas = async(limitSubastas) => {
     try {
         const response = await db
             .collection("subastas")
-            .where("statusSubasta", "!=", "pending")
+            .where("statusSubasta", "==", "active")
             //.orderBy("createAt", "desc")
             .limit(limitSubastas)
             .get()
@@ -626,6 +626,19 @@ export const addMoreInfoSubasta = async(idSubasta, fechaSubastar, horaSubastar,h
         result.error = error
     }
     return result   
+}
+
+export const RechazarSubastaUpdate = async(idSubasta) => {
+    const result = { statusResponse: true, error: null }
+    try {
+        console.log("entra al try")
+        db.collection("subastas").doc(idSubasta).update({statusSubasta:"rejected"})
+     } catch (error) {
+        console.log("entra al catch")
+        result.statusResponse = false
+        result.error = error
+    }
+    return result
 }
 
 export const addNewPuja = async(idSubasta,uuid,puja,uidUsuario,horario) => {

@@ -11,7 +11,7 @@ import { DateTimePickerModal } from "react-native-modal-datetime-picker";
 import CarouselImages from '../../components/CarouselImages'
 import Loading from '../../components/Loading'
 import ListItemsMiSubastaAdmin from '../../components/subastas/ListItemsMiSubastaAdmin'
-import { addMoreInfoSubasta, getDocumentById, getCurrentUser,setNotificationMessage,sendPushNotification} from '../../utils/actions'
+import { addMoreInfoSubasta, getDocumentById, getCurrentUser,setNotificationMessage,sendPushNotification, RechazarSubastaUpdate} from '../../utils/actions'
 
 const widthScreen = Dimensions.get("window").width
 
@@ -94,9 +94,18 @@ export default function miSubastaAdmin({ navigation, route }) {
         navigation.navigate("mis-subastas")
     } 
 
-    //const sendNotificationMessage = async() => {
-            
-    //}
+    const RechazarSubasta = async() => {
+        console.log("entra")
+        console.log(id)
+        setLoading(true)
+        const responseRechazar= await RechazarSubastaUpdate(id)
+        if (!responseRechazar.statusResponse) {
+            setLoading(false)
+            toastRef.current.show("Error al rechazar la subasta", 3000)
+            return
+        }
+        navigation.navigate("mis-subastas")
+    }
     
     const validForm = () => {
         clearErrors()
@@ -117,40 +126,40 @@ export default function miSubastaAdmin({ navigation, route }) {
     getParsedDate(date);
   };
 
-  function getParsedDate(date) {
-    const oldDate = new Date(date);
-    const day = oldDate.getDate();
-    const month = oldDate.getMonth() + 1;
-    const year = oldDate.getFullYear();
-    const hour = oldDate.getHours() + 3;
-    const minutes = oldDate.getUTCMinutes();
+    function getParsedDate(date) {
+        const oldDate = new Date(date);
+        const day = oldDate.getDate();
+        const month = oldDate.getMonth() + 1;
+        const year = oldDate.getFullYear();
+        const hour = oldDate.getHours() + 3;
+        const minutes = oldDate.getUTCMinutes();
 
-    const fecha = day + "-" + month + "-" + year;
-    const hora = hour + ":" + minutes;
-    setFecha(fecha);
-    setHora(hora);
-  }
+        const fecha = day + "-" + month + "-" + year;
+        const hora = hour + ":" + minutes;
+        setFecha(fecha);
+        setHora(hora);
+    }
 
-  const showHourPicker = () => {
-    setHourPickerVisibility(true);
-  };
-  const hideHourPicker = () => {
-    setHourPickerVisibility(false);
-  };
-  const handleHourConfirm = (h) => {
-    console.warn("A hour has been picked: ", h);
-    hideHourPicker();
-    getParsedHour(h);
-  };
+    const showHourPicker = () => {
+        setHourPickerVisibility(true);
+    };
+    const hideHourPicker = () => {
+        setHourPickerVisibility(false);
+    };
+    const handleHourConfirm = (h) => {
+        console.warn("A hour has been picked: ", h);
+        hideHourPicker();
+        getParsedHour(h);
+    };
 
-  function getParsedHour(h) {
-    const oldHour = new Date(h);
-    const hour = oldHour.getHours() + 3;
-    const minutes = oldHour.getUTCMinutes();
+    function getParsedHour(h) {
+        const oldHour = new Date(h);
+        const hour = oldHour.getHours() + 3;
+        const minutes = oldHour.getUTCMinutes();
 
-    const hora = hour + ":" + minutes;
-    setHoraFinSubasta(hora);
-  }
+        const hora = hour + ":" + minutes;
+        setHoraFinSubasta(hora);
+    }
 
     const clearErrors = () => {
         setFecha(null)
@@ -229,6 +238,21 @@ export default function miSubastaAdmin({ navigation, route }) {
                 title="Aceptar subasta"
                 onPress={addMoreInfo}
                 buttonStyle={styles.btnActivarSubasta}
+                icon={{
+                    type: "material-community",
+                    name: "check-circle-outline",
+                    color: "#ffff"
+                }}
+            />
+            <Button
+                title="Rechazar subasta"
+                onPress={RechazarSubasta}
+                buttonStyle={styles.btnRechazarSubasta}
+                icon={{
+                    type: "material-community",
+                    name: "close-circle-outline",
+                    color: "#ffff"
+                }}
             />
             <Toast ref={toastRef} position="center" opacity={0.9}/>
             <Loading isVisible={loading} text="Por favor espere..."/>
@@ -340,6 +364,11 @@ const styles = StyleSheet.create({
     },
     btnActivarSubasta: {
         margin: 20,
-        backgroundColor: "#442484",
+        backgroundColor: "#44a858",
+    },
+    btnRechazarSubasta: {
+        margin: 20,
+        marginTop:1,
+        backgroundColor: "#cf4666",
     }
 })
