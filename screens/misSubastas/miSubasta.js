@@ -11,7 +11,7 @@ import CarouselImages from '../../components/CarouselImages'
 import Loading from '../../components/Loading'
 import ListItemsMiSubasta from '../../components/subastas/ListItemsMiSubasta'
 
-import { getDocumentById } from '../../utils/actions'
+import { getCurrentUser, getDocumentById, AceptarSubastaRematadorUpdate, RechazarSubastaRematadorUpdate, setNotificationMessage, sendPushNotification } from '../../utils/actions'
 
 const widthScreen = Dimensions.get("window").width
 
@@ -52,6 +52,76 @@ export default function miSubasta({ navigation, route }) {
         return <Loading isVisible={true} text="Cargando..."/>
     }
 
+    const AceptarSubastaRematador = async() => {
+        
+        setLoading(true)
+        const responseAddMoreInfo = await AceptarSubastaRematadorUpdate(id)
+        if (!responseAddMoreInfo.statusResponse) {
+            setLoading(false)
+            toastRef.current.show("Error al aceptar la subasta", 3000)
+            return
+        }
+
+        setLoading(true)
+        const resultToken = await getDocumentById("users",getCurrentUser().uid)
+            if(!resultToken.statusResponse){
+                setLoading(false)
+                Alert.alert("No se pudo obtener el token del usuario")
+                return
+        }
+        
+        const messageNotificaction = setNotificationMessage(
+            resultToken.document.token,
+            'App Subastas',
+            'El usuario ha aceptado los terminos y activo la subasta',
+            {data:'Data de prueba'}
+        )
+
+        const response = await sendPushNotification(messageNotificaction)
+
+        if (response){
+            Alert.alert("Se ha activado la subasta.")
+        }else{
+            Alert.alert("Ocurrió un problema al aceptar la subasta")
+        }
+        navigation.navigate("mis-subastas")
+    } 
+
+    const RechazarSubastaRematador = async() => {
+        console.log("entra")
+        console.log(id)
+        setLoading(true)
+        const responseRechazar= await RechazarSubastaRematadorUpdate(id)
+        if (!responseRechazar.statusResponse) {
+            setLoading(false)
+            toastRef.current.show("Error al rechazar la subasta", 3000)
+            return
+        }
+        setLoading(true)
+        const resultToken = await getDocumentById("users",getCurrentUser().uid)
+            if(!resultToken.statusResponse){
+                setLoading(false)
+                Alert.alert("No se pudo obtener el token del usuario")
+                return
+        }
+        
+        const messageNotificaction = setNotificationMessage(
+            resultToken.document.token,
+            'App Subastas',
+            'La propuesta de subasta fue rechazada por el subastador',
+            {data:'Data de prueba'}
+        )
+
+        const response = await sendPushNotification(messageNotificaction)
+
+        if (response){
+            Alert.alert("Se ha rechazado la subasta.")
+        }else{
+            Alert.alert("Ocurrió un problema al rechazar la subasta.")
+        }
+        navigation.navigate("mis-subastas")
+    }
+    
     return (
         <ScrollView style={styles.viewBody}>
             <CarouselImages
@@ -88,7 +158,7 @@ export default function miSubasta({ navigation, route }) {
                     <View>
                         <Button
                             title="Aceptar Condiciones y Subastar"
-                            //onPress={AceptarSubastaRematador}
+                            onPress={AceptarSubastaRematador}
                             buttonStyle={styles.btnActivarSubasta}
                             icon={{
                                 type: "material-community",
@@ -98,7 +168,7 @@ export default function miSubasta({ navigation, route }) {
                         />
                         <Button
                             title="Rechazar condiciones"
-                            //onPress={RechazarSubastaRematador}
+                            onPress={RechazarSubastaRematador}
                             buttonStyle={styles.btnRechazarSubasta}
                             icon={{
                                 type: "material-community",

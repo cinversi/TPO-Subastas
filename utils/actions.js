@@ -631,10 +631,8 @@ export const addMoreInfoSubasta = async(idSubasta, fechaSubastar, horaSubastar,h
 export const RechazarSubastaUpdate = async(idSubasta) => {
     const result = { statusResponse: true, error: null }
     try {
-        console.log("entra al try")
         db.collection("subastas").doc(idSubasta).update({statusSubasta:"rejected"})
      } catch (error) {
-        console.log("entra al catch")
         result.statusResponse = false
         result.error = error
     }
@@ -671,6 +669,28 @@ export const updatePrecioBase = async(idSubasta, itemUuid, precioBase,categoria,
     try {
         db.collection("subastas").doc(idSubasta).update({preciosBase:firebase.firestore.FieldValue.arrayUnion(...[{itemUuid:itemUuid, precioBase:precioBase}]),categoria:categoria,comision:comision}) 
     } catch (error) {
+        result.statusResponse = false
+        result.error = error
+    }
+    return result
+}
+
+export const AceptarSubastaRematadorUpdate = async(idSubasta) => {
+    const result = { statusResponse: true, error: null }
+    try {
+        db.collection("subastas").doc(idSubasta).update({statusSubasta:"active"})
+     } catch (error) {
+        result.statusResponse = false
+        result.error = error
+    }
+    return result   
+}
+
+export const RechazarSubastaRematadorUpdate = async(idSubasta) => {
+    const result = { statusResponse: true, error: null }
+    try {
+        db.collection("subastas").doc(idSubasta).update({statusSubasta:"rejected"})
+     } catch (error) {
         result.statusResponse = false
         result.error = error
     }
