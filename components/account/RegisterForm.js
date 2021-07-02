@@ -30,10 +30,19 @@ export default function RegisterForm() {
         if (!validateData()){
             return;
         }
- 
+
+        var arrayCategorias = [
+            "común", 
+            "plata", 
+            "oro",
+            "platino"
+        ];
+          
+        var categoria = arrayCategorias[Math.floor(Math.random()*arrayCategorias.length)];
+
         setLoading(true)
         const token = await getToken()
-        const result = await registerUser(formData.email, "123456",formData.nombre,formData.apellido,formData.dni,formData.direccion,"comun",mediosPago,"user",token)
+        const result = await registerUser(formData.email, "123456",formData.nombre,formData.apellido,formData.dni,formData.direccion,categoria,mediosPago,"user",token)
         if (!result.statusResponse) {
             setLoading(false)
             setErrorEmail(result.error)

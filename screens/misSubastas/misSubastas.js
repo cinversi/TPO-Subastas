@@ -11,14 +11,14 @@ import ListMisSubastasAdmin from '../../components/misSubastasAdmin/ListMisSubas
 
 import { getCurrentUser, getDocumentById, getMoreMisSubastas, getMisSubastas, getMisSubastasAdmin, getMoreMisSubastasAdmin } from '../../utils/actions'
 
-export default function Subastas({ navigation }) {
+export default function misSubastas({ navigation }) {
     const [user, setUser] = useState(null)
     const [startSubasta, setStartSubasta] = useState(null)
     const [subastas, setSubastas] = useState([])
     const [loading, setLoading] = useState(false)
     const [userIsAdmin, setUserIsAdmin] = useState(false)
     const [startSubastaAdmin, setStartSubastaAdmin] = useState(null)
-    const[subastasAdmin,setSubastasAdmin] = useState([])
+    const [subastasAdmin,setSubastasAdmin] = useState([])
     const limitSubastas = 7
     const limitSubastasAdmin = 7
 
