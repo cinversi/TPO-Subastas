@@ -6,9 +6,8 @@ import { useNavigation } from '@react-navigation/native'
 import { Checkbox } from 'react-native-paper'
 
 import { validateEmail } from '../../utils/helpers'
-import { registerUser } from '../../utils/actions'
+import { registerUser,getToken } from '../../utils/actions'
 import Loading from '../Loading'
- 
  
 export default function RegisterForm() {
     const [formData, setFormData] = useState(defaultFormValues())
@@ -33,13 +32,15 @@ export default function RegisterForm() {
         }
  
         setLoading(true)
-        const result = await registerUser(formData.email, "123456",formData.nombre,formData.apellido,formData.dni,formData.direccion,"comun",mediosPago,"user")
-        setLoading(false)
- 
-        if (!result.statusResponse){
+        const token = await getToken()
+        const result = await registerUser(formData.email, "123456",formData.nombre,formData.apellido,formData.dni,formData.direccion,"comun",mediosPago,"user",token)
+        if (!result.statusResponse) {
+            setLoading(false)
             setErrorEmail(result.error)
             return
         }
+
+        setLoading(false)
         Alert.alert("Confirmación", "Será redirigido a una nueva pantalla para generar su contraseña.")
         navigation.navigate("generate-password")
     }

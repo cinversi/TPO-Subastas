@@ -19,7 +19,7 @@ export default function ListSubastas({ subastas, navigation, handleLoadMore }) {
 }
 
 function Subasta({ subasta, navigation, handleLoadMore }) {
-    const { id, images, name, address, categoria, fechaSubastar } = subasta.item
+    const { id, images, name, categoria, fechaSubastar } = subasta.item
     const imageSubasta = images[0]
 
     const goSubasta = () => {

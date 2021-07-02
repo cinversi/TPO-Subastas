@@ -32,12 +32,12 @@ export const closeSession = () => {
     return firebase.auth().signOut()
 }
 
-export const registerUser = async(email,password,nombre,apellido,dni,direccion,categoria,mediosPago,role) => {
+export const registerUser = async(email,password,nombre,apellido,dni,direccion,categoria,mediosPago,role,token) => {
     const result = { statusResponse: true, error: null}
     const user = firebase.auth().createUserWithEmailAndPassword(email, 
         password).then(cred => {
         return firebase.firestore().collection('users').doc(cred.user.uid).set({
-            email,nombre,apellido,dni,direccion,categoria,mediosPago,role
+            email,nombre,apellido,dni,direccion,categoria,mediosPago,role,token
           })
         })
     return result
@@ -653,17 +653,13 @@ export const addSubastaFinalizada = async(idSubasta,itemUuid,nombreUltimoPujador
     return result     
 }
 
-export const updatePrecioBase = async(idSubasta, itemUuid, precioBase) => {
+export const updatePrecioBase = async(idSubasta, itemUuid, precioBase,categoria) => {
     const result = { statusResponse: true, error: null }
     try {
-        db.collection("subastas").doc(idSubasta).update({preciosBase:firebase.firestore.FieldValue.arrayUnion(...[{itemUuid:itemUuid, precioBase:precioBase}])})
-        console.log(idSubasta)
-        console.log(itemUuid)
-        console.log(precioBase)    
+        db.collection("subastas").doc(idSubasta).update({preciosBase:firebase.firestore.FieldValue.arrayUnion(...[{itemUuid:itemUuid, precioBase:precioBase}]),categoria:categoria}) 
     } catch (error) {
         result.statusResponse = false
         result.error = error
     }
-    console.log(result)
     return result
 }

@@ -11,8 +11,7 @@ import { DateTimePickerModal } from "react-native-modal-datetime-picker";
 import CarouselImages from '../../components/CarouselImages'
 import Loading from '../../components/Loading'
 import ListItemsMiSubastaAdmin from '../../components/subastas/ListItemsMiSubastaAdmin'
-
-import { addMoreInfoSubasta, getDocumentById} from '../../utils/actions'
+import { addMoreInfoSubasta, getDocumentById, getCurrentUser,setNotificationMessage,sendPushNotification} from '../../utils/actions'
 
 const widthScreen = Dimensions.get("window").width
 
@@ -62,15 +61,43 @@ export default function miSubastaAdmin({ navigation, route }) {
             return
         }
         setLoading(true)
+        
         const responseAddMoreInfo = await addMoreInfoSubasta(id, fechaSubastar, horaSubastar,horaFinSubasta)
         if (!responseAddMoreInfo.statusResponse) {
             setLoading(false)
             toastRef.current.show("Error al agregar los datos a la subasta", 3000)
             return
         }
+
+        setLoading(true)
+        const resultToken = await getDocumentById("users",getCurrentUser().uid)
+            if(!resultToken.statusResponse){
+                setLoading(false)
+                Alert.alert("No se pudo obtener el token del usuario")
+                return
+        }
+        
+        const messageNotificaction = setNotificationMessage(
+            resultToken.document.token,
+            'App Subastas',
+            'Los productos cargados fueron aprobados para ser subastados',
+            {data:'Data de prueba'}
+        )
+
+        const response = await sendPushNotification(messageNotificaction)
+
+        if (response){
+            Alert.alert("Se ha aprobado la subasta y se ha notificado al usuario.")
+        }else{
+            Alert.alert("Ocurrió un problema al aprobar la subasta y notificar al usuario")
+        }
         navigation.navigate("mis-subastas")
     } 
 
+    //const sendNotificationMessage = async() => {
+            
+    //}
+    
     const validForm = () => {
         clearErrors()
         let isValid = true

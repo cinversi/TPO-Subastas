@@ -15,8 +15,9 @@ export default function ChangeDireccionForm({ id,itemUuid, precioBase, setModalV
             return
         }
 
+        const categoria =calcularCategoria(newPrecioBase)
         setLoading(true)
-        const result = await updatePrecioBase(id,itemUuid,newPrecioBase)  
+        const result = await updatePrecioBase(id,itemUuid,newPrecioBase,categoria)  
         setLoading(false)
 
         if (!result.statusResponse) {
@@ -37,6 +38,27 @@ export default function ChangeDireccionForm({ id,itemUuid, precioBase, setModalV
 
         return true
     }
+
+    const calcularCategoria = (precioB) => {
+        let p = "";
+        if (precioB < 10000) {
+        p = "COMUN";
+        return p;
+        } else if (precioB < 50000) {
+        p = "ESPECIAL";
+        return p;
+        } else if (precioB < 100000) {
+        p = "PLATA";
+        return p;
+        } else if (precioB <= 500000) {
+        p = "ORO";
+        return p;
+        } else if (precioB > 500000) {
+        p = "PLATINO";
+        console.log("el valor de p al final es:",p)
+        return p;
+        }
+    };
 
     return (
         <View style={styles.view}>

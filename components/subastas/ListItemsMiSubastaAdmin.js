@@ -49,27 +49,6 @@ function CatItem({ catItem,id, navigation }) {
         user ? setUserLogged(true) : setUserLogged(false)
     })
 
-    
-//   const calcularCategoria = (precioB) => {
-//     let p = "";
-//     if (precioB < 10000) {
-//       p = "COMUN";
-//       return p;
-//     } else if (precioB < 50000) {
-//       p = "ESPECIAL";
-//       return p;
-//     } else if (precioB < 100000) {
-//       p = "PLATA";
-//       return p;
-//     } else if (precioB <= 500000) {
-//       p = "ORO";
-//       return p;
-//     } else if (precioB > 500000) {
-//       p = "PLATINO";
-//       return p;
-//     }
-//   };
-
     return (
         <TouchableOpacity onPress={goCatItem}>
             <View style={styles.viewCatitem}>

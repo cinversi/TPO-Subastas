@@ -20,7 +20,7 @@
     "expo-google-sign-in": "^9.1.0",
     "expo-image-picker": "~10.1.4",
     "expo-location": "~12.0.4",
-    "expo-notifications": "^0.11.6",
+    "expo-notifications": "~0.11.6",
     "expo-permissions": "~12.0.1",
     "expo-status-bar": "~1.0.4",
     "exponent": "^14.0.0",

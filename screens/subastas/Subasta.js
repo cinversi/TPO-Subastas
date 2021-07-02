@@ -65,6 +65,10 @@ export default function Subasta({ navigation, route }) {
                 name={subasta.name}
                 description={subasta.description}
                 categoria={subasta.categoria}
+                fechaSubastar={subasta.fechaSubastar}
+                horaSubastar={subasta.horaSubastar}
+                horaFinSubasta={subasta.horaFinSubasta}
+                moneda={subasta.moneda}
             />
             <ListItem
                 style={styles.containerListItem}
@@ -84,67 +88,25 @@ export default function Subasta({ navigation, route }) {
                     </View>
                 )
             }
-            <SubastaInfo
-                name={subasta.name}
-                currentUser={currentUser}
-                setLoading={setLoading}
-            />
+
             <Toast ref={toastRef} position="center" opacity={0.9}/>
             <Loading isVisible={loading} text="Por favor espere..."/>
         </ScrollView>
     )
 }
 
-function SubastaInfo({ 
-    name, 
-    location, 
-    address
-}) {
-    const listInfo = [
-        { type: "addres", text: address, iconLeft: "map-marker"}
-    ]
-
-    return (
-        <View style={styles.viewSubastaInfo}>
-            <Text style={styles.subastaInfoTitle}>
-                Información sobre la subasta
-            </Text>
-            {/* <MapSubasta
-                location={location}
-                name={name}
-                height={150}
-            /> */}
-            {
-                map(listInfo, (item, index) => (
-                    <ListItem
-                        key={index}
-                        style={styles.containerListItem}
-                    >
-                        <Icon
-                            type="material-community"
-                            name={item.iconLeft}
-                            color="#442484"
-                            onPress={() => actionLeft(item.type)}
-                        />
-                        <ListItem.Content>
-                            <ListItem.Title>{item.text}</ListItem.Title>
-                        </ListItem.Content>
-                    </ListItem>
-                ))
-            }
-        </View>
-    )
-}
-
-function TitleSubasta({ name, description, categoria }) {
+function TitleSubasta({ name, description, categoria, fechaSubastar, horaSubastar, horaFinSubasta, moneda}) {
     return (
         <View style={styles.viewSubastaTitle}>
             <View style={styles.viewSubastaContainer}>
                 <Text style={styles.nameSubasta}>{name}</Text>
             </View>
-            <Text style={styles.descriptionSubasta}>{description}</Text>
             <Text style={styles.categoriaSubasta}>Categoría {categoria}</Text>
-
+            <Text style={styles.descriptionSubasta}>{description}</Text>
+            <Text style={styles.descriptionSubasta}>Fecha a Subastar: {fechaSubastar}</Text>
+            <Text style={styles.descriptionSubasta}>Horario a Subastar: {horaSubastar}</Text>
+            <Text style={styles.descriptionSubasta}>Horario de Finalización: {horaFinSubasta}</Text>
+            <Text style={styles.descriptionSubasta}>Moneda: ${moneda}</Text>
         </View>
     )
 }
