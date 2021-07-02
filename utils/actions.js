@@ -135,8 +135,8 @@ export const getSubastas = async(limitSubastas,usuarioCategoria) => {
         const response = await db
             .collection("subastas")
             //.where("categoria", "<", usuarioCategoria)
-            .where("statusSubasta", "==", "active")
-            .where("categoria","==",1)
+            .where("statusSubasta", "==", "ACTIVA")
+            //.where("categoria","==",1)
             //.orderBy("createAt", "desc")
             .limit(limitSubastas)
             .get()
@@ -162,7 +162,7 @@ export const getMoreSubastas = async(limitSubastas, startSubasta) => {
     try {
         const response = await db
             .collection("subastas")
-            .where("statusSubasta", "==", "active")
+            .where("statusSubasta", "==", "ACTIVA")
             //.orderBy("createAt", "desc")
             .startAfter(startSubasta.data().createAt)
             .limit(limitSubastas)
@@ -577,7 +577,7 @@ export const getMisSubastasAdmin = async(limitSubastas) => {
     try {
         const response = await db
             .collection("subastas")
-            .where("statusSubasta", "==", "pending")
+            .where("statusSubasta", "==", "PENDIENTE")
             //.orderBy("createAt", "desc")
             .limit(limitSubastas)
             .get()
@@ -601,7 +601,7 @@ export const getMoreMisSubastasAdmin = async(limitSubastas, startSubasta) => {
     try {
         const response = await db
             .collection("subastas")
-            .where("statusSubasta", "==", "pending")
+            .where("statusSubasta", "==", "PENDIENTE")
             //.orderBy("createAt", "desc")
             .startAfter(startSubasta.data().createAt)
             .limit(limitSubastas)
@@ -624,7 +624,7 @@ export const getMoreMisSubastasAdmin = async(limitSubastas, startSubasta) => {
 export const addMoreInfoSubasta = async(idSubasta, fechaSubastar, horaSubastar,horaFinSubasta) => {
     const result = { statusResponse: true, error: null }
     try {
-        db.collection("subastas").doc(idSubasta).update({fechaSubastar: fechaSubastar,horaSubastar:horaSubastar,horaFinSubasta:horaFinSubasta,statusSubasta:"available"})
+        db.collection("subastas").doc(idSubasta).update({fechaSubastar: fechaSubastar,horaSubastar:horaSubastar,horaFinSubasta:horaFinSubasta,statusSubasta:"APROBADA"})
      } catch (error) {
         result.statusResponse = false
         result.error = error
@@ -635,7 +635,7 @@ export const addMoreInfoSubasta = async(idSubasta, fechaSubastar, horaSubastar,h
 export const RechazarSubastaUpdate = async(idSubasta) => {
     const result = { statusResponse: true, error: null }
     try {
-        db.collection("subastas").doc(idSubasta).update({statusSubasta:"rejected"})
+        db.collection("subastas").doc(idSubasta).update({statusSubasta:"RECHAZADA"})
      } catch (error) {
         result.statusResponse = false
         result.error = error
@@ -682,7 +682,7 @@ export const updatePrecioBase = async(idSubasta, itemUuid, precioBase,categoria)
 export const AceptarSubastaRematadorUpdate = async(idSubasta) => {
     const result = { statusResponse: true, error: null }
     try {
-        db.collection("subastas").doc(idSubasta).update({statusSubasta:"active"})
+        db.collection("subastas").doc(idSubasta).update({statusSubasta:"ACTIVA"})
      } catch (error) {
         result.statusResponse = false
         result.error = error
@@ -693,7 +693,7 @@ export const AceptarSubastaRematadorUpdate = async(idSubasta) => {
 export const RechazarSubastaRematadorUpdate = async(idSubasta) => {
     const result = { statusResponse: true, error: null }
     try {
-        db.collection("subastas").doc(idSubasta).update({statusSubasta:"rejected"})
+        db.collection("subastas").doc(idSubasta).update({statusSubasta:"RECHAZADA"})
      } catch (error) {
         result.statusResponse = false
         result.error = error

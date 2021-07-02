@@ -41,7 +41,7 @@ function Subasta({ subasta, navigation, handleLoadMore }) {
                     <Text style={styles.subastaTitle}>{name}</Text>
                     <Text style={styles.subastaInformation}>Categoría: {categoria}</Text>
                     <Text style={styles.subastaInformation}>Fecha: {fechaSubastar}</Text>
-                    <Text style={styles.subastaInformation}>Estado: {statusSubasta}</Text>
+                    <Text style={styles.subastaEstado}>Estado: {statusSubasta}</Text>
                 </View>
             </View>
         </TouchableOpacity>
@@ -66,5 +66,10 @@ const styles = StyleSheet.create({
     subastaInformation: {
         paddingTop: 2,
         color: "grey"
-    }
+    },
+    subastaEstado: {
+        paddingTop: 2,
+        color: "black",
+        fontWeight: "bold"
+    },
 })

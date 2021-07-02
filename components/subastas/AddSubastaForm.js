@@ -119,7 +119,7 @@ export default function AddSubastaForm({ toastRef, setLoading, navigation }) {
       createAt: new Date(),
       rematador: getCurrentUser().uid,
       categoria: "",//calcularCategoria(formData.precioBase),
-      statusSubasta:'pending'
+      statusSubasta:'PENDIENTE'
     };
 
     const responseAddDocument = await addDocumentWithoutId("subastas", subasta);
