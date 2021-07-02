@@ -32,12 +32,12 @@ export default function RegisterForm() {
         }
 
         var arrayCategorias = [
-            "común", 
-            "plata", 
-            "oro",
-            "platino"
+            "COMUN", 
+            "ESPECIAL", 
+            "PLATA",
+            "ORO",
+            "PLATINO"
         ];
-          
         var categoria = arrayCategorias[Math.floor(Math.random()*arrayCategorias.length)];
 
         setLoading(true)
