@@ -664,10 +664,10 @@ export const addSubastaFinalizada = async(idSubasta,itemUuid,nombreUltimoPujador
     return result     
 }
 
-export const updatePrecioBase = async(idSubasta, itemUuid, precioBase,categoria,comision) => {
+export const updatePrecioBase = async(idSubasta, itemUuid, precioBase,categoria) => {
     const result = { statusResponse: true, error: null }
     try {
-        db.collection("subastas").doc(idSubasta).update({preciosBase:firebase.firestore.FieldValue.arrayUnion(...[{itemUuid:itemUuid, precioBase:precioBase}]),categoria:categoria,comision:comision}) 
+        db.collection("subastas").doc(idSubasta).update({preciosBase:firebase.firestore.FieldValue.arrayUnion(...[{itemUuid:itemUuid, precioBase:precioBase}]),categoria:categoria}) 
     } catch (error) {
         result.statusResponse = false
         result.error = error

@@ -1,8 +1,8 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { FlatList, StyleSheet, Text, View, TouchableOpacity } from 'react-native'
 import firebase from 'firebase/app'
-
-export default function ListItemsMiSubasta({ catItems, id, navigation, handleLoadMore }) {
+import {size} from 'lodash'
+export default function ListItemsMiSubasta({ catItems, id, navigation, handleLoadMore, subasta}) {
 
     return (
         <View>
@@ -15,25 +15,55 @@ export default function ListItemsMiSubasta({ catItems, id, navigation, handleLoa
                     <CatItem 
                         catItem={catItem} 
                         id={id}
-                        navigation={navigation}/>
+                        navigation={navigation}
+                        subasta={subasta}/>
                 )}
             />
         </View>
     )
 }
 
-function CatItem({ catItem, navigation }) {
+function CatItem({ catItem, navigation, subasta}) {
     const [userLogged, setUserLogged] = useState(false)
-    const { itemUuid, nombreItem, descripcion, cantidad, precioBase } = catItem.item
+    const { itemUuid, nombreItem, descripcion, cantidad } = catItem.item
+    const [precioBaseItem,setPrecioBaseItem] = useState()
+    const [comisionBaseItem,setComisionBaseItem] = useState()
 
     const goCatItem = () => {
         navigation.navigate("catItem", { itemUuid, nombreItem })
     } 
-
+    
     firebase.auth().onAuthStateChanged((user) => {
         user ? setUserLogged(true) : setUserLogged(false)
     })
 
+    useEffect(() => {
+        setPrecioBaseItem(ObtenerPrecioBaseItem(subasta,itemUuid))
+        setComisionBaseItem(ObtenerComisionBaseItem(subasta,itemUuid))
+        console.log(precioBaseItem)
+    }, [])
+    
+    const ObtenerPrecioBaseItem = (subasta,itemUuid) => {
+        const longitudPrecios=size(subasta.preciosBase)
+        let precioBaseProd = ""
+        for(let i = 0; i < longitudPrecios; i++){
+            if(subasta.preciosBase[i].itemUuid==itemUuid){
+                precioBaseProd =subasta.preciosBase[i].precioBase
+            }
+        }
+        return precioBaseProd
+    }
+    const ObtenerComisionBaseItem = (subasta,itemUuid) => {
+        const longitudPrecios=size(subasta.preciosBase)
+        let comisionBaseProd = ""
+        for(let i = 0; i < longitudPrecios; i++){
+            if(subasta.preciosBase[i].itemUuid==itemUuid){
+                comisionBaseProd=parseFloat(parseInt(subasta.preciosBase[i].precioBase)*0.1).toFixed(2)
+            }
+        }
+        return comisionBaseProd
+    }
+ 
     return (
         <TouchableOpacity onPress={goCatItem}>
             <View style={styles.viewCatitem}>
@@ -41,7 +71,8 @@ function CatItem({ catItem, navigation }) {
                     <Text style={styles.catitemTitle}>Producto: {nombreItem}</Text>
                     <Text style={styles.catitemInformation}>Descripción: {descripcion}</Text>
                     <Text style={styles.catitemInformation}>Cantidad: {cantidad}</Text>
-
+                    <Text style={styles.catitemTitle}>Precio Base: {precioBaseItem}</Text>
+                    <Text style={styles.catitemTitle}>Comision Base: {comisionBaseItem}</Text>
                 </View>
             </View>
         </TouchableOpacity>

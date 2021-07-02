@@ -146,6 +146,7 @@ export default function miSubasta({ navigation, route }) {
                         catItems={catItems}
                         navigation={navigation}
                         handleLoadMore={() => {}}
+                        subasta={subasta}
                     />
                 ) : (
                     <View style={styles.notFoundView}>

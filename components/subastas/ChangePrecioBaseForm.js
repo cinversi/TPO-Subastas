@@ -16,9 +16,8 @@ export default function ChangeDireccionForm({ id,itemUuid, precioBase, setModalV
         }
 
         const categoria =calcularCategoria(newPrecioBase)
-        const comision = (parseInt(newPrecioBase)*0.1)
         setLoading(true)
-        const result = await updatePrecioBase(id,itemUuid,newPrecioBase,categoria,comision)  
+        const result = await updatePrecioBase(id,itemUuid,newPrecioBase,categoria)  
         setLoading(false)
 
         if (!result.statusResponse) {
