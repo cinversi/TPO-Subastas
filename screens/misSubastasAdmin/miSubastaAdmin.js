@@ -104,6 +104,28 @@ export default function miSubastaAdmin({ navigation, route }) {
             toastRef.current.show("Error al rechazar la subasta", 3000)
             return
         }
+        setLoading(true)
+        const resultToken = await getDocumentById("users",getCurrentUser().uid)
+            if(!resultToken.statusResponse){
+                setLoading(false)
+                Alert.alert("No se pudo obtener el token del usuario")
+                return
+        }
+        
+        const messageNotificaction = setNotificationMessage(
+            resultToken.document.token,
+            'App Subastas',
+            'Los productos cargados fueron rechazados para ser subastados',
+            {data:'Data de prueba'}
+        )
+
+        const response = await sendPushNotification(messageNotificaction)
+
+        if (response){
+            Alert.alert("Se ha rechazado la subasta y se ha notificado al usuario.")
+        }else{
+            Alert.alert("Ocurrió un problema al rechazar la subasta y notificar al usuario")
+        }
         navigation.navigate("mis-subastas")
     }
     
@@ -115,16 +137,16 @@ export default function miSubastaAdmin({ navigation, route }) {
     }
  
     const showDatePicker = () => {
-    setDatePickerVisibility(true);
-  };
-  const hideDatePicker = () => {
-    setDatePickerVisibility(false);
-  };
-  const handleConfirm = (date) => {
-    console.warn("A date has been picked: ", date);
-    hideDatePicker();
-    getParsedDate(date);
-  };
+        setDatePickerVisibility(true);
+    };
+    const hideDatePicker = () => {
+        setDatePickerVisibility(false);
+    };
+    const handleConfirm = (date) => {
+        console.warn("A date has been picked: ", date);
+        hideDatePicker();
+        getParsedDate(date);
+    };
 
     function getParsedDate(date) {
         const oldDate = new Date(date);

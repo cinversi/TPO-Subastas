@@ -1,8 +1,8 @@
-import React, { useState, useCallback, useRef, useEffect } from 'react'
+import React, { useState, useCallback, useRef } from 'react'
 import { View } from 'react-native'
 import { Alert, Dimensions, StyleSheet, Text, ScrollView } from 'react-native'
-import { ListItem, Icon, Input, Button } from 'react-native-elements'
-import { isEmpty, map, size} from 'lodash'
+import { ListItem, Button } from 'react-native-elements'
+import { size} from 'lodash'
 import { useFocusEffect } from '@react-navigation/native'
 import firebase from 'firebase/app'
 import Toast from 'react-native-easy-toast'
@@ -11,7 +11,7 @@ import CarouselImages from '../../components/CarouselImages'
 import Loading from '../../components/Loading'
 import ListItemsMiSubasta from '../../components/subastas/ListItemsMiSubasta'
 
-import { getDocumentById, getIsFavorite } from '../../utils/actions'
+import { getDocumentById } from '../../utils/actions'
 
 const widthScreen = Dimensions.get("window").width
 
@@ -82,6 +82,32 @@ export default function miSubasta({ navigation, route }) {
                         <Text style={styles.notFoundText}>No hay productos cargados.</Text>
                     </View>
                 )
+            }
+            {
+                subasta.statusSubasta == 'available' ? (
+                    <View>
+                        <Button
+                            title="Aceptar Condiciones y Subastar"
+                            //onPress={AceptarSubastaRematador}
+                            buttonStyle={styles.btnActivarSubasta}
+                            icon={{
+                                type: "material-community",
+                                name: "check-circle-outline",
+                                color: "#ffff"
+                            }}
+                        />
+                        <Button
+                            title="Rechazar condiciones"
+                            //onPress={RechazarSubastaRematador}
+                            buttonStyle={styles.btnRechazarSubasta}
+                            icon={{
+                                type: "material-community",
+                                name: "close-circle-outline",
+                                color: "#ffff"
+                            }}
+                        />
+                    </View>
+                ):null
             }
             <Toast ref={toastRef} position="center" opacity={0.9}/>
             <Loading isVisible={loading} text="Por favor espere..."/>
@@ -172,5 +198,14 @@ const styles = StyleSheet.create({
     modalContainer: {
         justifyContent: "center",
         alignItems: "center"
+    },
+    btnActivarSubasta: {
+        margin: 20,
+        backgroundColor: "#44a858",
+    },
+    btnRechazarSubasta: {
+        margin: 20,
+        marginTop:1,
+        backgroundColor: "#cf4666",
     }
 })

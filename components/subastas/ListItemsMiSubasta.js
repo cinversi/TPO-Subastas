@@ -24,7 +24,7 @@ export default function ListItemsMiSubasta({ catItems, id, navigation, handleLoa
 
 function CatItem({ catItem, navigation }) {
     const [userLogged, setUserLogged] = useState(false)
-    const { itemUuid, nombreItem, descripcion, cantidad } = catItem.item
+    const { itemUuid, nombreItem, descripcion, cantidad, precioBase } = catItem.item
 
     const goCatItem = () => {
         navigation.navigate("catItem", { itemUuid, nombreItem })
@@ -41,6 +41,7 @@ function CatItem({ catItem, navigation }) {
                     <Text style={styles.catitemTitle}>Producto: {nombreItem}</Text>
                     <Text style={styles.catitemInformation}>Descripción: {descripcion}</Text>
                     <Text style={styles.catitemInformation}>Cantidad: {cantidad}</Text>
+
                 </View>
             </View>
         </TouchableOpacity>
