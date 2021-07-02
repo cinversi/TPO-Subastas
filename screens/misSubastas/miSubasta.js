@@ -155,7 +155,7 @@ export default function miSubasta({ navigation, route }) {
                 )
             }
             {
-                subasta.statusSubasta == 'available' ? (
+                subasta.statusSubasta == 'APROBADA' ? (
                     <View>
                         <Button
                             title="Aceptar Condiciones y Subastar"
