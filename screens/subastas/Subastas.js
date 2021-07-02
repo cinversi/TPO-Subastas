@@ -7,7 +7,7 @@ import firebase from 'firebase/app'
 
 import Loading from '../../components/Loading'
 import ListSubastas from '../../components/subastas/ListSubastas'
-import { getMoreSubastas, getSubastas } from '../../utils/actions'
+import { getCurrentUser, getDocumentById, getMoreSubastas, getSubastas } from '../../utils/actions'
 
 
 export default function Subastas({ navigation }) {
@@ -15,8 +15,9 @@ export default function Subastas({ navigation }) {
     const [startSubasta, setStartSubasta] = useState(null)
     const [subastas, setSubastas] = useState([])
     const [loading, setLoading] = useState(false)
-
     const limitSubastas = 7
+    const [usuario, setUsuario] = useState()
+    const [usuarioCategoria, setUsuarioCategoria] = useState()
 
     useEffect(() => {
         firebase.auth().onAuthStateChanged((userInfo) => {
@@ -28,7 +29,20 @@ export default function Subastas({ navigation }) {
         useCallback(() => {
             async function getData() {
                 setLoading(true)
-                const response = await getSubastas(limitSubastas)
+                const response = await getDocumentById("users", getCurrentUser().uid);
+                setUsuario(response.document)
+                setUsuarioCategoria(response.document.categoria)
+                setLoading(false)
+            }
+            getData()
+        }, [])
+    )
+
+    useFocusEffect(
+        useCallback(() => {
+            async function getData() {
+                setLoading(true)
+                const response = await getSubastas(limitSubastas,parseInt(usuarioCategoria))
                 if (response.statusResponse) {
                     setStartSubasta(response.startSubasta)
                     setSubastas(response.subastas)

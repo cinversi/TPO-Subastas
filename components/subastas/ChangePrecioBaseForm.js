@@ -42,21 +42,20 @@ export default function ChangeDireccionForm({ id,itemUuid, precioBase, setModalV
     const calcularCategoria = (precioB) => {
         let p = "";
         if (precioB < 10000) {
-        p = "COMUN";
-        return p;
+            p = "COMUN";
+            return p;
         } else if (precioB < 50000) {
-        p = "ESPECIAL";
-        return p;
+            p = "ESPECIAL";
+            return p;
         } else if (precioB < 100000) {
-        p = "PLATA";
-        return p;
+            p = "PLATA";
+            return p;
         } else if (precioB <= 500000) {
-        p = "ORO";
-        return p;
+            p = "ORO";
+            return p;
         } else if (precioB > 500000) {
-        p = "PLATINO";
-        console.log("el valor de p al final es:",p)
-        return p;
+            p = "PLATINO";
+            return p;
         }
     };
 
