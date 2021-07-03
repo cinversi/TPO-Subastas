@@ -71,8 +71,9 @@ function CatItem({ catItem, navigation, subasta}) {
                     <Text style={styles.catitemTitle}>Producto: {nombreItem}</Text>
                     <Text style={styles.catitemInformation}>Descripción: {descripcion}</Text>
                     <Text style={styles.catitemInformation}>Cantidad: {cantidad}</Text>
-                    <Text style={styles.catitemTitle}>Precio Base: {precioBaseItem}</Text>
-                    <Text style={styles.catitemTitle}>Comision Base: {comisionBaseItem}</Text>
+                    <Text style={styles.catitemTitle}>Precio Base: ${precioBaseItem}</Text>
+                    <Text style={styles.catitemTitle}>Comision Base: ${comisionBaseItem}</Text>
+                    <Text style={styles.catitemInformation}>La comisión final será calculada siendo el 10% del precio final del producto.</Text>
                 </View>
             </View>
         </TouchableOpacity>

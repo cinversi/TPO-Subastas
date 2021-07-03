@@ -128,20 +128,16 @@ export const addDocumentWithoutId = async(collection, data) => {
     return result     
 }
 
-export const getSubastas = async(limitSubastas,usuarioCategoria) => {
+export const getSubastas = async(limitSubastas) => {
     const result = { statusResponse: true, error: null, subastas: [], startSubasta: null }
     try {
-        console.log("ESTA ES EL TIPO DE DATO",typeof(usuarioCategoria))
         const response = await db
             .collection("subastas")
-            //.where("categoria", "<", usuarioCategoria)
             .where("statusSubasta", "==", "ACTIVA")
             //.where("categoria","==",1)
             //.orderBy("createAt", "desc")
             .limit(limitSubastas)
             .get()
-
-        //response.subastas = await fireSQL.query(`SELECT * FROM subastas WHERE statusSubasta = 'active' AND categoria < 2`)
         if (response.docs.length > 0) {
             result.startSubasta = response.docs[response.docs.length - 1]
         }
@@ -154,7 +150,7 @@ export const getSubastas = async(limitSubastas,usuarioCategoria) => {
         result.statusResponse = false
         result.error = error
     }
-    return result     
+    return result
 }
 
 export const getMoreSubastas = async(limitSubastas, startSubasta) => {
