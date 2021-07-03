@@ -1,5 +1,6 @@
 import React from "react";
 import { FlatList, StyleSheet, Text, View, TouchableOpacity } from "react-native";
+import { Button } from "react-native-elements";
 
 export default function ListPaymentOptions({ payments, navigation, handleLoadMore}) {
   return (
@@ -12,6 +13,12 @@ export default function ListPaymentOptions({ payments, navigation, handleLoadMor
         renderItem={(payment) => (
           <Payment payment={payment} navigation={navigation} />
         )}
+      />
+      <Button
+      buttonStyle={styles.btnCategoria}
+      title="Reevaluar mi categoria de usuario"
+      titleStyle={styles.btnTitleCategoria}
+      //onPress={this.addPayment}
       />
     </View>
   );
@@ -59,4 +66,10 @@ const styles = StyleSheet.create({
     paddingTop: 2,
     color: "grey",
   },
+  btnCategoria:{
+    backgroundColor: "transparent"
+  },
+  btnTitleCategoria:{
+    color: "#a376c7"
+  }
 });

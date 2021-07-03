@@ -135,6 +135,9 @@ export default function miSubasta({ navigation, route }) {
                 name={subasta.name}
                 description={subasta.description}
                 categoria={subasta.categoria}
+                moneda={subasta.moneda}
+                fechaSubastar={subasta.fechaSubastar}
+                horaSubastar={subasta.horaSubastar}
             />
             <ListItem
                 style={styles.containerListItem}
@@ -186,7 +189,7 @@ export default function miSubasta({ navigation, route }) {
     )
 }
 
-function TitleSubasta({ name, description, categoria }) {
+function TitleSubasta({ name, description, categoria, moneda, fechaSubastar, horaSubastar }) {
     return (
         <View style={styles.viewSubastaTitle}>
             <View style={styles.viewSubastaContainer}>
@@ -194,6 +197,9 @@ function TitleSubasta({ name, description, categoria }) {
             </View>
             <Text style={styles.descriptionSubasta}>{description}</Text>
             <Text style={styles.categoriaSubasta}>Categoría {categoria}</Text>
+            <Text style={styles.monedaSubastaAprobada}>Moneda: ${moneda}</Text>
+            <Text style={styles.infoSubastaAprobada}>Fecha: {fechaSubastar}</Text>
+            <Text style={styles.infoSubastaAprobada}>Hora: {horaSubastar}hs</Text>
 
         </View>
     )
@@ -224,6 +230,15 @@ const styles = StyleSheet.create({
     nameSubasta: {
         fontWeight: "bold"
     },
+    monedaSubastaAprobada: {
+        marginTop: 8,
+        fontWeight: "bold",
+        textAlign: "justify"
+    },
+    infoSubastaAprobada: {
+        fontWeight: "bold",
+        textAlign: "justify"
+    },
     categoriaSubasta: {
         fontWeight: "bold",
         color:"#ffbc63",
@@ -241,15 +256,6 @@ const styles = StyleSheet.create({
     containerListItem: {
         borderBottomColor: "#a376c7",
         borderBottomWidth: 1
-    },
-    viewFavorite: {
-        position: "absolute",
-        top: 0,
-        right: 0,
-        backgroundColor: "#fff",
-        borderBottomLeftRadius: 100,
-        padding: 5,
-        paddingLeft: 15
     },
     textArea: {
         height: 50,

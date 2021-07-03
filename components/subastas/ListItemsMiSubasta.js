@@ -72,8 +72,9 @@ function CatItem({ catItem, navigation, subasta}) {
                     <Text style={styles.catitemInformation}>Descripción: {descripcion}</Text>
                     <Text style={styles.catitemInformation}>Cantidad: {cantidad}</Text>
                     <Text style={styles.catitemTitle}>Precio Base: ${precioBaseItem}</Text>
-                    <Text style={styles.catitemTitle}>Comision Base: ${comisionBaseItem}</Text>
-                    <Text style={styles.catitemInformation}>La comisión final será calculada siendo el 10% del precio final del producto.</Text>
+                    <Text style={styles.catitemTitle}>Comision Base: ${comisionBaseItem} (*)</Text>
+                    <Text style={styles.catitemInformation}>(*) La comisión final será calculada siendo el 10% del precio final del producto.</Text>
+                    <Text style={styles.catitemRecordatorio}>Recordatorio: En caso de rechazar la oferta se llevará a cabo la devolución del bien y se le cobrarán los gastos de devolución.</Text>
                 </View>
             </View>
         </TouchableOpacity>
@@ -98,6 +99,11 @@ const styles = StyleSheet.create({
     catitemInformation: {
         paddingTop: 2,
         color: "grey"
+    },
+    catitemRecordatorio: {
+        paddingTop: 2,
+        color: "grey",
+        fontStyle: "italic"
     },
     btnAddPayment: {
         backgroundColor: "#442484",
