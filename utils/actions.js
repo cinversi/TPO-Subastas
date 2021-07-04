@@ -639,11 +639,12 @@ export const RechazarSubastaUpdate = async(idSubasta) => {
     return result
 }
 
-export const addNewPuja = async(idSubasta,uuid,puja,uidUsuario,horario) => {
+export const addNewPuja = async(idSubasta,itemUuid,puja,usuarioId,horarioPuja ) => {
     const result = { statusResponse: true, error: null }
+    console.log(idSubasta,itemUuid,puja,usuarioId,horarioPuja)
     try {
         // db.collection("subastas").doc(idSubasta).collection("catalogo").doc(nombreItem).update({listadoPujas:firebase.firestore.FieldValue.arrayUnion(...[{nombrePujador:uidUsuario,valorPujado:puja,horarioPuja:horario}])})
-        db.collection("subastas").doc(idSubasta).update({listadoPujas:firebase.firestore.FieldValue.arrayUnion(...[{itemUuid:uuid,valorPujado:puja,datosPujador:uidUsuario,horarioPuja:horario}])})
+        db.collection("subastas").doc(idSubasta).update({listadoPujas:firebase.firestore.FieldValue.arrayUnion(...[{itemUuid:itemUuid,valorPujado:puja,datosPujador:usuarioId,horarioPuja:horarioPuja}])})
         console.log(result)
      } catch (error) {
         result.statusResponse = false
@@ -675,6 +676,17 @@ export const updatePrecioBase = async(idSubasta, itemUuid, precioBase,categoria)
     return result
 }
 
+export const cerrandoSubasta = async(collection, id, estado) => {
+    const result = { statusResponse: true, error: null }
+    try {
+        await db.collection(collection).doc(id).update({statusSubasta:estado})
+    } catch (error) {
+        result.statusResponse = false
+        result.error = error
+    }
+    return result     
+}
+
 export const AceptarSubastaRematadorUpdate = async(idSubasta) => {
     const result = { statusResponse: true, error: null }
     try {
@@ -696,3 +708,64 @@ export const RechazarSubastaRematadorUpdate = async(idSubasta) => {
     }
     return result
 }
+
+export const reseteandoPujadores = async(collection, idUsuario, estado) => {
+    const result = { statusResponse: true, error: null }
+    console.log("collection",collection)
+    console.log("idUsuario",idUsuario)
+    console.log("estado",estado)
+    try {
+        await db.collection(collection).doc(idUsuario).update({estoyEnSubasta:estado})
+    } catch (error) {
+        result.statusResponse = false
+        result.error = error
+    }
+    console.log("reseteandoPujadores",result.statusResponse,result.error)
+    return result     
+}
+
+
+export const asistiendoAPuja = async(collection, id, estado,idSubasta,itemUuid,nombreItem) => {
+    const result = { statusResponse: true, error: null }
+    console.log(collection, id, estado,idSubasta,itemUuid,nombreItem)
+    try {
+        await db.collection(collection).doc(id).update({estoyEnSubasta:estado})
+        await db.collection(collection).doc(id).update({participaciones:firebase.firestore.FieldValue.arrayUnion(...[{idSubasta:idSubasta,itemUuid:itemUuid, nombreItem:nombreItem}])})
+    } catch (error) {
+        result.statusResponse = false
+        result.error = error
+    }
+    return result     
+}
+
+export const ganadaPorPujador = async(collection,ultimoPujadorID,id,itemUuid,nombreItem,ultimoValorPujado) => {
+    const result = { statusResponse: true, error: null }
+    console.log("collection",collection)
+    console.log("ultimoPujadorID",ultimoPujadorID)
+    console.log("idSubasta",id)
+    console.log("item",itemUuid)
+    console.log("nombreItem",nombreItem)
+    console.log("ultimoValorPujado",ultimoValorPujado)    
+    try {
+        await db.collection(collection).doc(ultimoPujadorID).update({subastasGanadas:firebase.firestore.FieldValue.arrayUnion(...[{idSubasta:id,itemUuid:itemUuid, nombreItem:nombreItem,valorFinal:ultimoValorPujado}])})
+    } catch (error) {
+        result.statusResponse = false
+        result.error = error
+    }
+    console.log("ganadaPorPujador",result.statusResponse,result.error)
+    return result     
+}
+
+
+export const updatePujadorSubasta = async(collection, id, estado) => {
+    const result = { statusResponse: true, error: null }
+    console.log("Entro a la función",collection,id,estado)
+    try {
+        await db.collection(collection).doc(id).update({estoyEnSubasta:estado})
+    } catch (error) {
+        result.statusResponse = false
+        result.error = error
+    }
+    return result     
+}
+

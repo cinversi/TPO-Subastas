@@ -16,7 +16,7 @@ export default function ListPaymentOptions({ payments, navigation, handleLoadMor
       />
       <Button
       buttonStyle={styles.btnCategoria}
-      title="Reevaluar mi categoria de usuario"
+      title="Solicitar actualización de categoria de usuario"
       titleStyle={styles.btnTitleCategoria}
       //onPress={this.addPayment}
       />

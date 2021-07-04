@@ -11,7 +11,7 @@ import CarouselImages from '../../components/CarouselImages'
 import Loading from '../../components/Loading'
 import ListItems from '../../components/subastas/ListItems'
 
-import { getDocumentById, getIsFavorite } from '../../utils/actions'
+import { getDocumentById } from '../../utils/actions'
 
 const widthScreen = Dimensions.get("window").width
 
@@ -68,6 +68,7 @@ export default function Subasta({ navigation, route }) {
                 fechaSubastar={subasta.fechaSubastar}
                 horaSubastar={subasta.horaSubastar}
                 horaFinSubasta={subasta.horaFinSubasta}
+                listadoPujas={subasta.listadoPujas}
                 moneda={subasta.moneda}
             />
             <ListItem
@@ -79,6 +80,11 @@ export default function Subasta({ navigation, route }) {
                     <ListItems
                         catItems={catItems}
                         id={id}
+                        horaComienzoSubasta={subasta.horaSubastar}
+                        horaFinSubasta={subasta.horaFinSubasta}
+                        fechaSubasta={subasta.fechaSubastar}
+                        subasta={subasta}
+                        currentUser={currentUser}
                         navigation={navigation}
                         handleLoadMore={() => {}}
                     />
