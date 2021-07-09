@@ -7,7 +7,7 @@ import firebase from 'firebase/app'
 
 import Loading from '../../components/Loading'
 import ListSubastas from '../../components/subastas/ListSubastas'
-import { getCurrentUser, getDocumentById, getMoreSubastas, getSubastas } from '../../utils/actions'
+import { getCurrentUser, getDocumentById, getMoreSubastas,getSubastas, getSubastasComun,getSubastasEspecial,getSubastasPlata,getSubastasOro,getSubastasPlatino } from '../../utils/actions'
 
 
 export default function Subastas({ navigation }) {
@@ -15,15 +15,19 @@ export default function Subastas({ navigation }) {
     const [startSubasta, setStartSubasta] = useState(null)
     const [subastas, setSubastas] = useState([])
     const [loading, setLoading] = useState(false)
-    const limitSubastas = 7
     const [usuario, setUsuario] = useState()
     const [usuarioCategoria, setUsuarioCategoria] = useState()
+    const [currentUser, setcurrentUser] = useState(false)
+    const limitSubastas = 25
 
     useEffect(() => {
         firebase.auth().onAuthStateChanged((userInfo) => {
-            userInfo ? setUser(true) : setUser(false)
+            userInfo ? (setUser(true) && setcurrentUser(true)) : setUser(false)
         })
     }, [])
+
+    console.log("user",user)
+    console.log("currentuser",currentUser)
 
     useFocusEffect(
         useCallback(() => {
@@ -40,16 +44,49 @@ export default function Subastas({ navigation }) {
 
     useFocusEffect(
         useCallback(() => {
-            async function getData() {
+            async function getDataCategorias() {
                 setLoading(true)
-                const response = await getSubastas(limitSubastas,parseInt(usuarioCategoria))
-                if (response.statusResponse) {
-                    setStartSubasta(response.startSubasta)
-                    setSubastas(response.subastas)
+                if(user==false){
+                    const response = await getSubastas(limitSubastas)
+                    if (response.statusResponse) {
+                        setStartSubasta(response.startSubasta)
+                        setSubastas(response.subastas)
+                    }
+                }else if(usuarioCategoria=="COMUN"){
+                    const response = await getSubastasComun(limitSubastas)
+                    if (response.statusResponse) {
+                        setStartSubasta(response.startSubasta)
+                        setSubastas(response.subastas)
+                    }
+                }else if(usuarioCategoria=="ESPECIAL"){
+                    const response = await getSubastasEspecial(limitSubastas)
+                    if (response.statusResponse) {
+                        setStartSubasta(response.startSubasta)
+                        setSubastas(response.subastas)
+                    }
+                }else if(usuarioCategoria=="PLATA"){
+                    const response = await getSubastasPlata(limitSubastas)
+                    if (response.statusResponse) {
+                        setStartSubasta(response.startSubasta)
+                        setSubastas(response.subastas)
+                    }
+                }else if(usuarioCategoria=="ORO"){
+                    const response = await getSubastasOro(limitSubastas)
+                    console.log("entre a este if")
+                    if (response.statusResponse) {
+                        setStartSubasta(response.startSubasta)
+                        setSubastas(response.subastas)
+                    }
+                }else if(usuarioCategoria=="PLATINO"){
+                    const response = await getSubastasPlatino(limitSubastas)
+                    if (response.statusResponse) {
+                        setStartSubasta(response.startSubasta)
+                        setSubastas(response.subastas)
+                    }
                 }
                 setLoading(false)
             }
-            getData()
+            getDataCategorias()
         }, [])
     )
 

@@ -14,12 +14,12 @@ export default function ListPaymentOptions({ payments, navigation, handleLoadMor
           <Payment payment={payment} navigation={navigation} />
         )}
       />
-      <Button
+      {/* <Button
       buttonStyle={styles.btnCategoria}
       title="Solicitar actualización de categoria de usuario"
       titleStyle={styles.btnTitleCategoria}
       //onPress={this.addPayment}
-      />
+      /> */}
     </View>
   );
 }

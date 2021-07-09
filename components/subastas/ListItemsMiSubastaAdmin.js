@@ -64,7 +64,7 @@ function CatItem({ catItem,id, navigation }) {
                                     title="Establecer precio"
                                     onPress={toggleModal}
                                 />
-                                <Modal isVisible={isModalVisible}>
+                                <Modal isVisible={isModalVisible} transparent={false}>
                                     <ChangePrecioBaseForm
                                         id={id}
                                         itemUuid={itemUuid}

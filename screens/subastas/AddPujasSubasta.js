@@ -1,14 +1,15 @@
 import React, { useState, useRef} from 'react'
-import { SafeAreaView,StyleSheet, Text, View,FlatList,TouchableOpacity } from 'react-native'
+import { Alert,SafeAreaView,StyleSheet, Text, View,FlatList,TouchableOpacity } from 'react-native'
 import { Button, Input } from 'react-native-elements'
 import Toast from 'react-native-easy-toast'
-import { isEmpty} from 'lodash'
+import { isEmpty,size} from 'lodash'
+import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'
 
 import Loading from '../../components/Loading'
-import { getCurrentUser, addNewPuja,asistiendoAPuja } from '../../utils/actions'
+import { getCurrentUser, addNewPuja,asistiendoAPuja,getDocumentById } from '../../utils/actions'
  
 export default function AddPujasSubasta({ navigation, route }) {
-    const { id,itemUuid,permitidoPujar,nombreItem,ultimoValorPujado,ultimoPujador,precioBaseItem,ultimoDiaHorarioPuja,subastaNoValida,espectadorRematador} = route.params
+    const { subasta,id,itemUuid,permitidoPujar,nombreItem,ultimoValorPujado,ultimoPujador,precioBaseItem,ultimoDiaHorarioPuja,subastaNoValida,espectadorRematador} = route.params
     const toastRef = useRef()
  
     const [puja,setPuja] = useState(null)
@@ -20,7 +21,7 @@ export default function AddPujasSubasta({ navigation, route }) {
         const day = oldDate.getDate();
         const month = oldDate.getMonth() + 1;
         const year = oldDate.getFullYear();
-        const hour = oldDate.getHours() + 3;
+        const hour = oldDate.getHours();
         const minutes = oldDate.getUTCMinutes();
 
         const horario=day + "-" + month + "-" + year + " " + hour + ":" + minutes
@@ -33,15 +34,66 @@ export default function AddPujasSubasta({ navigation, route }) {
         }
         const horarioPuja = getParsedDate()
         setLoading(true)
-        const responseAddPuja = await addNewPuja(id,itemUuid,puja,getCurrentUser().uid,horarioPuja )
-        cambiarAsistenciaAPuja()
-        if (!responseAddPuja.statusResponse) {
+        const usuarioActual = await getDocumentById("users",getCurrentUser().uid)
+        const longitudMediosPago = size(usuarioActual.document.medioPago)
+        console.log("usuarioSubasta",usuarioActual.document.estoyEnSubasta,id)
+        if(longitudMediosPago > 0){
+            if(usuarioActual.document.estoyEnSubasta=="0" ||usuarioActual.document.estoyEnSubasta==id){
+                console.log("No estoy en otra subasta")
+                const responseAddPuja = await addNewPuja(id,itemUuid,puja,getCurrentUser().uid,horarioPuja )
+                cambiarAsistenciaAPuja()
+                if (!responseAddPuja.statusResponse) {
+                    setLoading(false)
+                    toastRef.current.show("Error al realizar puja", 3000)
+                    return
+                }
+                toastRef.current.show("Su puja fue realizada", 3000)
+                navigation.navigate("subastas") 
+            }
+            else{
+                console.log("Estoy en otra subasta")
+                setLoading(false)
+                //Alert.alert("Confirmación", "Se le ha enviado un email con las instrucciones para generar su contraseña.",)
+                AlertaParticipandoEnOtraSubasta()            
+                navigation.navigate("subastas") 
+            }
+        }        
+        else{
             setLoading(false)
-            toastRef.current.show("Error al realizar puja", 3000)
-            return
+            //Alert.alert("Confirmación", "Se le ha enviado un email con las instrucciones para generar su contraseña.",)
+            AlertaNoMediosDePago()            
+            navigation.navigate("account") 
         }
-        navigation.navigate("subastas") 
-    }   
+        
+    }
+    const AlertaNoMediosDePago = () =>
+        Alert.alert(
+        "Fallo",
+        "No tenes medios de pago registrados",
+        [
+            {
+            text: "Cancel",
+            onPress: () => console.log("Cancel Pressed"),
+            style: "cancel"
+            },
+            { text: "OK", onPress: () => navigation.navigate("account")  }
+        ]
+    );
+
+    const AlertaParticipandoEnOtraSubasta = () =>
+        Alert.alert(
+        "Fallo",
+        "Actualmente ya estas participando en otra subasta",
+        [
+            {
+            text: "Cancel",
+            onPress: () => console.log("Cancel Pressed"),
+            style: "cancel"
+            },
+            { text: "OK", onPress: () => navigation.navigate("account")  }
+        ]
+    );
+
 
     const cambiarAsistenciaAPuja = async () =>{
         setLoading(true)
@@ -57,18 +109,19 @@ export default function AddPujasSubasta({ navigation, route }) {
     const validForm = () => {
         clearErrors()
         let isValid = true
- 
-        // if(subasta.categoria=="COMUN" || subasta.categoria == "ESPECIAL" || subasta.categoria== "PLATA"){
-        //     if(parseInt(puja)<parseInt(subasta.precioBase*1.01)){
-        //         setErrorPuja("Debes ingresar un monto mayor al 1% del precio base")
-        //         isValid=false
-        // }
-        // } 
- 
         const pujaInt=parseInt(puja)
         const valorLimit=(parseInt(ultimoValorPujado))*1.20
         const ultimoValorPujadoInt=parseInt(ultimoValorPujado)
  
+        console.log("categoriaSubasta",subasta.categoria)
+        console.log("ultimovalorpujado",ultimoValorPujado)
+        if(subasta.categoria=="COMUN" || subasta.categoria == "ESPECIAL" || subasta.categoria== "PLATA"){
+            if(parseInt(puja)<parseInt(ultimoValorPujadoInt*1.01)){
+                setErrorPuja("Debes ingresar un monto mayor al 1% del precio base")
+                isValid=false
+        }
+        }  
+
         if(pujaInt<=ultimoValorPujadoInt){
             setErrorPuja("El monto ingresado debe ser mayor a la ultima puja.")
             isValid = false
@@ -92,62 +145,52 @@ export default function AddPujasSubasta({ navigation, route }) {
         return isValid
     }
 
-    console.log("permitidoPujar",permitidoPujar)
+    console.log("AddPujaspermitidoPujar",permitidoPujar)
  
     const clearErrors = () => {
         setErrorPuja(null)
     }
 
     return (
-        <View style={styles.viewBody}>
-            <View>
-                <Text style={styles.viewPrecioBaseText}>Precio base</Text> 
-                <Text style={styles.viewPrecioBase}>${precioBaseItem}</Text>
-                <Text style={styles.viewPrecioActualText}>Precio actual</Text>
-                <Text style={styles.viewPrecioActual}>${ultimoValorPujado}</Text>
-                <Text style={styles.viewInfo}>{nombreItem}</Text>
-                <Text style={styles.viewUltimasPujas}>Día y horario de última puja: {ultimoDiaHorarioPuja}</Text>
-                <Text style={styles.viewUltimasPujas}>Ultimo pujador: {ultimoPujador}</Text>
+        <KeyboardAwareScrollView>
+            <View style={styles.viewBody}>
+                <View>
+                    <Text style={styles.viewPrecioBaseText}>Precio base</Text> 
+                    <Text style={styles.viewPrecioBase}>${precioBaseItem}</Text>
+                    <Text style={styles.viewPrecioActualText}>Precio actual</Text>
+                    <Text style={styles.viewPrecioActual}>${ultimoValorPujado}</Text>
+                    <Text style={styles.viewInfo}>{nombreItem}</Text>
+                    <Text style={styles.viewUltimasPujas}>Día y horario de última puja: {ultimoDiaHorarioPuja}</Text>
+                    <Text style={styles.viewUltimasPujas}>Ultimo pujador: {ultimoPujador}</Text>
+                </View>
+                {
+                    permitidoPujar ?
+                <View style={styles.formReview}>
+                    <Input
+                        placeholder="$ Ingresar valor a pujar"
+                        containerStyle={styles.input}
+                        onChange={(e) => setPuja(e.nativeEvent.text)}
+                        errorMessage={errorPuja}
+                    />
+                <Button
+                        title="Pujar"
+                        onPress={addPuja}
+                        buttonStyle={styles.btn}
+                        containerStyle={styles.btnContainer}
+                    />
+                </View>
+                    : !permitidoPujar ? 
+                        <View>
+                            <Text style={styles.viewNoPujarBigText}>
+                            Si ya realizaste una puja debes esperar a que otra persona realice una para volver a pujar, intenta más tarde.
+                            </Text>         
+                        </View>
+                    : null      
+                }
+                <Toast ref={toastRef} position="center" opacity={0.9}/>
+                <Loading isVisible={loading} text="Enviando su puja..."/>
             </View>
-            {
-                (!espectadorRematador && permitidoPujar && !subastaNoValida) ?
-            <View style={styles.formReview}>
-                <Input
-                    placeholder="$ Ingresar valor a pujar"
-                    containerStyle={styles.input}
-                    onChange={(e) => setPuja(e.nativeEvent.text)}
-                    errorMessage={errorPuja}
-                />
-               <Button
-                    title="Pujar"
-                    onPress={addPuja}
-                    buttonStyle={styles.btn}
-                    containerStyle={styles.btnContainer}
-                /> 
-            </View> 
-                : espectadorRematador ?   
-                   <View>
-                        <Text style={styles.viewNoPujarText}>
-                            Al terminar la subasta se te informarán los resultados.
-                        </Text>
-                   </View>                 
-                : !permitidoPujar ? 
-                    <View>
-                        <Text style={styles.viewNoPujarText}>
-                            Al terminar la subasta se te informarán los resultados.
-                        </Text>              
-                    </View>
-                : subastaNoValida ?
-                    <View>
-                       <Text style={styles.viewNoPujarText}>
-                        Al terminar la subasta se te informarán los resultados.
-                       </Text>              
-                    </View>
-                : null      
-            }
-            <Toast ref={toastRef} position="center" opacity={0.9}/>
-            <Loading isVisible={loading} text="Cargando puja..."/>
-        </View>
+        </KeyboardAwareScrollView>
     )
 }
  
@@ -238,6 +281,12 @@ const styles = StyleSheet.create({
         marginTop: 15
     },
     viewNoPujarSubText:{
+        fontSize:15,
+        textAlign:"center",
+        color:"#9c63c9",
+        marginTop: 10
+    },
+    viewNoPujarBigText:{
         fontSize:15,
         textAlign:"center",
         color:"#9c63c9",

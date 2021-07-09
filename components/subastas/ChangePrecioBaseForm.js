@@ -65,6 +65,7 @@ export default function ChangeDireccionForm({ id,itemUuid, precioBase, setModalV
                 placeholder="Ingresa el Precio Base"
                 containerStyle={styles.input}
                 defaultValue={precioBase}
+                color="#ffffff"
                 onChange={(e) => setNewPrecioBase(e.nativeEvent.text)}
                 errorMessage={error}
                 leftIcon={{

@@ -19,7 +19,6 @@ export default function RegisterForm() {
     const [errorCheckbox, setErrorCheckbox] = useState("")
     const [loading, setLoading] = useState(false)
     const navigation = useNavigation()
-    const mediosPago = []
     const [checked, setChecked] = useState(false)
     
     const onChange = (e,type) =>{
@@ -42,7 +41,7 @@ export default function RegisterForm() {
 
         setLoading(true)
         const token = await getToken()
-        const result = await registerUser(formData.email, "123456",formData.nombre,formData.apellido,formData.dni,formData.direccion,categoria,mediosPago,"user",token)
+        const result = await registerUser(formData.email, "123456",formData.nombre,formData.apellido,formData.dni,formData.direccion,categoria,"user",token,"0")
         if (!result.statusResponse) {
             setLoading(false)
             setErrorEmail(result.error)
